@@ -80,13 +80,13 @@
             padding: 0 20px;
         }
         
-        /* 页面容器 */
+        /* 页面容器 - 优化过渡动画 */
         .page {
             min-height: 100vh;
             padding: 100px 0 80px;
             opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.6s ease, transform 0.6s ease;
+            transform: translateX(30px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
             position: absolute;
             top: 0;
             left: 0;
@@ -98,12 +98,17 @@
         
         .page.active {
             opacity: 1;
-            transform: translateY(0);
+            transform: translateX(0);
             display: block;
             position: relative;
         }
         
-        /* 按钮样式 - 首页按钮移除阴影 */
+        .page.leaving {
+            opacity: 0;
+            transform: translateX(-30px);
+        }
+        
+        /* 按钮样式 */
         .btn {
             display: inline-block;
             padding: 14px 32px;
@@ -124,7 +129,6 @@
             isolation: isolate;
         }
         
-        /* 首页按钮特殊样式 - 无阴影 */
         .hero .btn,
         .hero .btn-outline {
             box-shadow: none !important;
@@ -136,7 +140,6 @@
             transform: translateY(-3px) scale(1.05) translateZ(0);
         }
         
-        /* 其他按钮保持原有阴影效果 */
         .btn:not(.hero .btn):not(.hero .btn-outline) {
             box-shadow: var(--box-shadow), var(--glow-effect);
         }
@@ -181,12 +184,6 @@
             color: white;
         }
         
-        /* 小按钮样式 */
-        .btn-small {
-            padding: 8px 16px;
-            font-size: 0.9rem;
-        }
-        
         /* 智能侧边栏 */
         .smart-sidebar {
             position: fixed;
@@ -214,7 +211,6 @@
             z-index: 1002;
             position: relative;
             transform: translateZ(0);
-            animation: pulse 2s infinite;
         }
         
         .sidebar-toggle:hover {
@@ -350,7 +346,7 @@
             opacity: 0;
         }
         
-        /* 新增动画关键帧 - 优化性能 */
+        /* 动画关键帧 */
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -390,76 +386,6 @@
             }
             50% { 
                 transform: translateY(-15px) translateZ(0); 
-            }
-        }
-        
-        @keyframes slideInLeft {
-            from {
-                opacity: 0;
-                transform: translateX(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-        
-        @keyframes pulse {
-            0% { 
-                box-shadow: 0 0 0 0 rgba(108, 99, 255, 0.4); 
-            }
-            70% { 
-                box-shadow: 0 0 0 10px rgba(108, 99, 255, 0); 
-            }
-            100% { 
-                box-shadow: 0 0 0 0 rgba(108, 99, 255, 0); 
-            }
-        }
-        
-        @keyframes shimmer {
-            0% {
-                background-position: -200% center;
-            }
-            100% {
-                background-position: 200% center;
-            }
-        }
-        
-        @keyframes rotate {
-            from {
-                transform: rotate(0deg);
-            }
-            to {
-                transform: rotate(360deg);
-            }
-        }
-        
-        @keyframes bounce {
-            0%, 100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-10px);
-            }
-        }
-        
-        /* 新增：粒子动画 */
-        @keyframes particleFloat {
-            0%, 100% {
-                transform: translate(0, 0) scale(1);
-                opacity: 0.8;
-            }
-            25% {
-                transform: translate(10px, -15px) scale(1.1);
-                opacity: 1;
-            }
-            50% {
-                transform: translate(-5px, -25px) scale(0.9);
-                opacity: 0.6;
-            }
-            75% {
-                transform: translate(-15px, -10px) scale(1.05);
-                opacity: 0.9;
             }
         }
         
@@ -557,16 +483,6 @@
             display: inline-block;
             transition: var(--transition);
             animation: float 4s ease-in-out infinite;
-        }
-        
-        .feature-card:hover .feature-icon {
-            transform: scale(1.1);
-            animation: bounce 0.5s ease;
-        }
-        
-        .feature-card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 15px;
         }
         
         /* 项目展示 */
@@ -689,11 +605,6 @@
             transition: var(--transition);
         }
         
-        .project-tag:hover {
-            transform: scale(1.05);
-            background-color: rgba(108, 99, 255, 0.2);
-        }
-        
         /* 关于我们 */
         .about-content {
             display: grid;
@@ -707,11 +618,6 @@
             color: var(--text-light);
             margin-bottom: 25px;
             animation: fadeInLeft 0.8s ease forwards;
-            opacity: 0;
-        }
-        
-        .about-text p {
-            animation: fadeInLeft 0.8s 0.2s ease forwards;
             opacity: 0;
         }
         
@@ -748,11 +654,6 @@
             color: var(--primary-color);
             margin-bottom: 5px;
             font-family: 'Poppins', sans-serif;
-        }
-        
-        .stat-label {
-            font-size: 0.95rem;
-            color: var(--text-muted);
         }
         
         /* 联系区域 */
@@ -807,11 +708,6 @@
             transition: var(--transition);
         }
         
-        .contact-item:hover .contact-icon {
-            transform: rotate(15deg) scale(1.1);
-            animation: bounce 0.5s ease;
-        }
-        
         .contact-form {
             background-color: var(--card-bg);
             border-radius: var(--border-radius);
@@ -827,11 +723,6 @@
             animation: fadeInUp 0.5s ease forwards;
             opacity: 0;
         }
-        
-        .form-group:nth-child(1) { animation-delay: 0.1s; }
-        .form-group:nth-child(2) { animation-delay: 0.2s; }
-        .form-group:nth-child(3) { animation-delay: 0.3s; }
-        .form-group:nth-child(4) { animation-delay: 0.4s; }
         
         .form-control {
             width: 100%;
@@ -913,12 +804,6 @@
             opacity: 0;
         }
         
-        .footer-links li:nth-child(1) { animation-delay: 0.1s; }
-        .footer-links li:nth-child(2) { animation-delay: 0.2s; }
-        .footer-links li:nth-child(3) { animation-delay: 0.3s; }
-        .footer-links li:nth-child(4) { animation-delay: 0.4s; }
-        .footer-links li:nth-child(5) { animation-delay: 0.5s; }
-        
         .footer-links a {
             color: var(--text-muted);
             text-decoration: none;
@@ -974,7 +859,7 @@
             opacity: 0;
         }
         
-        /* 背景动画 */
+        /* 背景动画 - 简化版本 */
         .bg-animation {
             position: fixed;
             top: 0;
@@ -996,7 +881,7 @@
             will-change: transform;
         }
         
-        /* 粒子效果 - 优化版本 */
+        /* 粒子效果 - 性能优化版本 */
         .particles {
             position: fixed;
             top: 0;
@@ -1014,115 +899,35 @@
             opacity: 0.1;
             transform: translateZ(0);
             will-change: transform;
-            animation: particleFloat 15s infinite ease-in-out;
         }
         
-        /* 新增：高级粒子效果 */
-        .advanced-particles {
+        /* 页面加载进度条 */
+        #pageProgress {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            pointer-events: none;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            width: 0%;
+            z-index: 9999;
+            transition: width 0.3s ease;
         }
         
-        .advanced-particle {
-            position: absolute;
-            border-radius: 50%;
-            background: radial-gradient(circle, var(--accent-color), transparent);
-            opacity: 0.05;
-            animation: particleFloat 20s infinite ease-in-out;
+        /* 访问计数器 */
+        .visit-counter {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(108, 99, 255, 0.1);
+            border-radius: var(--border-radius);
+            font-size: 0.9rem;
+            color: var(--text-muted);
         }
         
         /* 性能优化类 */
-        .will-change-transform {
-            will-change: transform;
-        }
-        
         .content-visible {
             content-visibility: auto;
             contain-intrinsic-size: 1000px;
-        }
-        
-        /* 加载指示器 */
-        .loading-indicator {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
-            transform: translateX(-100%);
-            z-index: 9999;
-            pointer-events: none;
-        }
-        
-        .loading-indicator.active {
-            animation: loading 1.5s ease-in-out infinite;
-        }
-        
-        @keyframes loading {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-        
-        /* 右键菜单 */
-        .context-menu {
-            position: fixed;
-            background-color: var(--dark-card);
-            backdrop-filter: blur(10px);
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow), 0 0 30px rgba(108, 99, 255, 0.3);
-            border: 1px solid var(--dark-border);
-            padding: 10px 0;
-            min-width: 200px;
-            z-index: 2000;
-            opacity: 0;
-            transform: scale(0.9);
-            transform-origin: top left;
-            transition: opacity 0.2s ease, transform 0.2s ease;
-            pointer-events: none;
-            will-change: transform, opacity;
-        }
-        
-        .context-menu.active {
-            opacity: 1;
-            transform: scale(1);
-            pointer-events: all;
-        }
-        
-        .context-menu-item {
-            padding: 12px 20px;
-            color: var(--text-muted);
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.95rem;
-            border-left: 3px solid transparent;
-            user-select: none;
-        }
-        
-        .context-menu-item:hover {
-            background-color: rgba(108, 99, 255, 0.1);
-            color: var(--primary-color);
-            border-left-color: var(--primary-color);
-            padding-left: 25px;
-        }
-        
-        .context-menu-divider {
-            height: 1px;
-            background-color: var(--dark-border);
-            margin: 8px 0;
-        }
-        
-        .context-menu-item i {
-            width: 20px;
-            text-align: center;
         }
         
         /* 滚动到顶部按钮 */
@@ -1158,59 +963,6 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 30px rgba(108, 99, 255, 0.5);
         }
         
-        /* 新增的微妙动画效果 */
-        .fade-in {
-            animation: fadeIn 0.5s ease forwards;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        .card-hover {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .card-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-        }
-        
-        /* 页面加载进度条 */
-        #pageProgress {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
-            width: 0%;
-            z-index: 9999;
-            transition: width 0.3s ease;
-        }
-        
-        /* 访问计数器 */
-        .visit-counter {
-            text-align: center;
-            margin-bottom: 20px;
-            padding: 15px;
-            background: rgba(108, 99, 255, 0.1);
-            border-radius: var(--border-radius);
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            animation: fadeIn 1s ease;
-        }
-        
-        /* 呼吸灯效果 */
-        .breathing-light {
-            animation: breathing 3s ease-in-out infinite;
-        }
-        
-        @keyframes breathing {
-            0%, 100% { opacity: 0.6; transform: scale(0.98); }
-            50% { opacity: 1; transform: scale(1.02); }
-        }
-        
         /* 页面水印 */
         #watermark {
             position: fixed;
@@ -1220,7 +972,7 @@
             height: 100%;
             pointer-events: none;
             z-index: 9998;
-            opacity: 0.03;
+            opacity: 0.02;
             font-size: 120px;
             font-weight: bold;
             color: var(--primary-color);
@@ -1231,97 +983,6 @@
             user-select: none;
             white-space: nowrap;
             font-family: 'Poppins', sans-serif;
-        }
-        
-        /* 缓存状态显示 */
-        #cacheStatus {
-            position: fixed;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0,0,0,0.8);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            z-index: 999;
-            display: none;
-        }
-        
-        /* 日期时间显示 */
-        #dateTimeDisplay {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: var(--dark-card);
-            color: var(--text-light);
-            padding: 10px 20px;
-            border-radius: var(--border-radius);
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.9rem;
-            z-index: 1000;
-            box-shadow: var(--box-shadow);
-            border: 1px solid var(--dark-border);
-            backdrop-filter: blur(10px);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        /* 书签按钮 */
-        #bookmarkBtn {
-            position: fixed;
-            bottom: 100px;
-            right: 30px;
-            width: 50px;
-            height: 50px;
-            background: var(--primary-color);
-            color: white;
-            border-radius: 50%;
-            border: none;
-            cursor: pointer;
-            box-shadow: var(--box-shadow);
-            z-index: 998;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            transition: all 0.3s ease;
-        }
-        
-        /* 语音朗读按钮 */
-        #speechReader {
-            position: fixed;
-            bottom: 160px;
-            right: 30px;
-            width: 50px;
-            height: 50px;
-            background: var(--primary-color);
-            color: white;
-            border-radius: 50%;
-            border: none;
-            cursor: pointer;
-            box-shadow: var(--box-shadow);
-            z-index: 998;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            transition: all 0.3s ease;
-        }
-        
-        /* 代码雨背景 */
-        #matrixCanvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
-            opacity: 0.1;
-            pointer-events: none;
         }
         
         /* 开发者模式面板 */
@@ -1445,14 +1106,6 @@
             transform: translateY(-2px);
         }
         
-        .developer-btn.danger {
-            background: var(--accent-color);
-        }
-        
-        .developer-btn.danger:hover {
-            background: #ff4d6d;
-        }
-        
         .developer-status {
             margin-top: 20px;
             padding: 15px;
@@ -1460,26 +1113,6 @@
             border-radius: var(--border-radius);
             font-size: 0.85rem;
             color: var(--text-muted);
-        }
-        
-        .developer-toggle {
-            position: fixed;
-            bottom: 220px;
-            right: 30px;
-            width: 50px;
-            height: 50px;
-            background: var(--accent-color);
-            color: white;
-            border-radius: 50%;
-            border: none;
-            cursor: pointer;
-            box-shadow: var(--box-shadow);
-            z-index: 998;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            transition: all 0.3s ease;
         }
         
         /* 新增：团队展示 */
@@ -1504,7 +1137,6 @@
         .team-member:nth-child(1) { animation-delay: 0.1s; }
         .team-member:nth-child(2) { animation-delay: 0.2s; }
         .team-member:nth-child(3) { animation-delay: 0.3s; }
-        .team-member:nth-child(4) { animation-delay: 0.4s; }
         
         .team-member:hover {
             transform: translateY(-10px);
@@ -1573,7 +1205,6 @@
         .timeline-item:nth-child(1) { animation-delay: 0.1s; }
         .timeline-item:nth-child(2) { animation-delay: 0.2s; }
         .timeline-item:nth-child(3) { animation-delay: 0.3s; }
-        .timeline-item:nth-child(4) { animation-delay: 0.4s; }
         
         .timeline-dot {
             position: absolute;
@@ -1607,32 +1238,7 @@
         }
         
         /* 新增功能样式 */
-        /* 1. 自定义鼠标光标 */
-        .custom-cursor {
-            position: fixed;
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--primary-color);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9999;
-            transform: translate(-50%, -50%);
-            transition: width 0.2s, height 0.2s;
-            mix-blend-mode: difference;
-        }
-        
-        .custom-cursor.hover {
-            width: 40px;
-            height: 40px;
-            background-color: var(--primary-color);
-            opacity: 0.3;
-        }
-        
-        .custom-cursor.click {
-            transform: translate(-50%, -50%) scale(0.8);
-        }
-        
-        /* 2. 实时在线状态指示器 */
+        /* 实时在线状态指示器 */
         .online-status {
             position: fixed;
             top: 20px;
@@ -1665,53 +1271,7 @@
             color: #ff5252;
         }
         
-        /* 3. 页面阅读进度指示器 */
-        .reading-progress {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--dark-card);
-            border-radius: var(--border-radius);
-            padding: 10px 20px;
-            box-shadow: var(--box-shadow);
-            border: 1px solid var(--dark-border);
-            z-index: 999;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        .reading-progress.visible {
-            opacity: 1;
-        }
-        
-        .reading-progress-bar {
-            width: 200px;
-            height: 6px;
-            background: var(--dark-border);
-            border-radius: 3px;
-            overflow: hidden;
-        }
-        
-        .reading-progress-bar:after {
-            content: '';
-            display: block;
-            width: 0%;
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
-            transition: width 0.3s ease;
-        }
-        
-        .reading-progress-text {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            min-width: 80px;
-        }
-        
-        /* 4. 页面内容搜索功能 */
+        /* 页面内容搜索功能 */
         .search-box {
             position: relative;
             margin-bottom: 20px;
@@ -1741,303 +1301,7 @@
             color: var(--text-muted);
         }
         
-        .search-results {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: var(--dark-card);
-            border: 1px solid var(--dark-border);
-            border-radius: var(--border-radius);
-            margin-top: 5px;
-            max-height: 300px;
-            overflow-y: auto;
-            display: none;
-        }
-        
-        .search-results.visible {
-            display: block;
-        }
-        
-        .search-result-item {
-            padding: 10px 15px;
-            border-bottom: 1px solid var(--dark-border);
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-        
-        .search-result-item:hover {
-            background: rgba(108, 99, 255, 0.1);
-        }
-        
-        .search-result-item:last-child {
-            border-bottom: none;
-        }
-        
-        .search-highlight {
-            background: rgba(255, 101, 132, 0.3);
-            color: var(--accent-color);
-            padding: 2px 4px;
-            border-radius: 3px;
-        }
-        
-        /* 5. 页面密码保护区域 */
-        .secret-section {
-            margin-top: 50px;
-            padding: 40px;
-            background: linear-gradient(135deg, var(--dark-card) 0%, rgba(108, 99, 255, 0.1) 100%);
-            border-radius: var(--border-radius);
-            border: 1px solid var(--dark-border);
-            text-align: center;
-        }
-        
-        .secret-lock {
-            transition: all 0.3s ease;
-        }
-        
-        .secret-lock input {
-            width: 200px;
-            padding: 12px;
-            margin: 15px 0;
-            background: var(--dark-bg);
-            border: 2px solid var(--dark-border);
-            border-radius: var(--border-radius);
-            color: var(--text-light);
-            text-align: center;
-            font-size: 1.1rem;
-        }
-        
-        .secret-lock button {
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            font-family: 'Poppins', sans-serif;
-            transition: all 0.3s ease;
-        }
-        
-        .secret-lock button:hover {
-            background: var(--secondary-color);
-            transform: translateY(-2px);
-        }
-        
-        .secret-content {
-            animation: fadeIn 0.5s ease;
-        }
-        
-        /* 6. 页面快捷导航菜单 */
-        .quick-nav {
-            position: fixed;
-            right: 30px;
-            bottom: 150px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            z-index: 998;
-        }
-        
-        .quick-nav-btn {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: var(--dark-card);
-            border: 1px solid var(--dark-border);
-            color: var(--text-light);
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            opacity: 0.7;
-        }
-        
-        .quick-nav-btn:hover {
-            opacity: 1;
-            transform: scale(1.1);
-            background: var(--primary-color);
-            box-shadow: var(--glow-effect);
-        }
-        
-        .quick-nav-btn span {
-            font-size: 0.7rem;
-            margin-top: 2px;
-        }
-        
-        /* 7. 页面截图分享功能 */
-        .screenshot-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-        
-        .screenshot-modal.visible {
-            opacity: 1;
-            pointer-events: all;
-        }
-        
-        .screenshot-content {
-            background: var(--dark-card);
-            border-radius: var(--border-radius);
-            padding: 20px;
-            max-width: 90%;
-            max-height: 90%;
-            overflow: auto;
-        }
-        
-        .screenshot-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-            justify-content: center;
-        }
-        
-        /* 8. 页面访客留言板 */
-        .guestbook {
-            margin-top: 50px;
-            padding: 30px;
-            background: var(--dark-card);
-            border-radius: var(--border-radius);
-            border: 1px solid var(--dark-border);
-        }
-        
-        .guestbook-form {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-        
-        .guestbook-form input,
-        .guestbook-form textarea {
-            padding: 12px 15px;
-            background: var(--dark-bg);
-            border: 1px solid var(--dark-border);
-            border-radius: var(--border-radius);
-            color: var(--text-light);
-            font-family: 'Roboto', sans-serif;
-            resize: vertical;
-        }
-        
-        .guestbook-form textarea {
-            min-height: 100px;
-        }
-        
-        .guestbook-messages {
-            max-height: 400px;
-            overflow-y: auto;
-            padding-right: 10px;
-        }
-        
-        .guestbook-message {
-            background: var(--dark-bg);
-            padding: 15px;
-            border-radius: var(--border-radius);
-            margin-bottom: 15px;
-            border-left: 3px solid var(--primary-color);
-            animation: slideInLeft 0.3s ease;
-        }
-        
-        .message-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-        }
-        
-        .message-author {
-            font-weight: bold;
-            color: var(--primary-color);
-        }
-        
-        .message-time {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
-        
-        /* 9. 页面元素放大镜 */
-        .magnifier {
-            position: fixed;
-            width: 200px;
-            height: 200px;
-            border: 2px solid var(--primary-color);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9999;
-            overflow: hidden;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-            display: none;
-            transform: translate(-50%, -50%);
-        }
-        
-        .magnifier.active {
-            display: block;
-        }
-        
-        .magnifier-content {
-            width: 100%;
-            height: 100%;
-            transform: scale(2);
-            transform-origin: center;
-        }
-        
-        /* 10. 页面翻译功能 */
-        .language-selector {
-            margin-top: 15px;
-        }
-        
-        .language-selector select {
-            width: 100%;
-            padding: 10px 15px;
-            background: var(--dark-bg);
-            border: 1px solid var(--dark-border);
-            border-radius: var(--border-radius);
-            color: var(--text-light);
-            font-family: 'Roboto', sans-serif;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .language-selector select:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.1);
-        }
-        
-        /* 11. 页面元素拖拽排序 */
-        .drag-instruction {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: rgba(108, 99, 255, 0.1);
-            color: var(--primary-color);
-            padding: 10px 15px;
-            border-radius: var(--border-radius);
-            margin-bottom: 20px;
-            font-size: 0.9rem;
-            animation: fadeIn 0.5s ease;
-        }
-        
-        .project-card.dragging {
-            opacity: 0.5;
-            transform: rotate(3deg);
-        }
-        
-        .project-card.drag-over {
-            border: 2px dashed var(--primary-color);
-        }
-        
-        /* 12. 页面节日特效 */
+        /* 节日特效 */
         .snowflake {
             position: absolute;
             top: -10px;
@@ -2049,288 +1313,13 @@
             z-index: 1000;
         }
         
-        .confetti {
-            position: fixed;
-            width: 10px;
-            height: 10px;
-            opacity: 0.7;
-            animation: confetti-fall linear infinite;
-            pointer-events: none;
-            z-index: 1000;
-        }
-        
         @keyframes fall {
             to {
                 transform: translateY(100vh) rotate(360deg);
             }
         }
         
-        @keyframes confetti-fall {
-            0% {
-                transform: translateY(-100px) rotate(0deg);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(100vh) rotate(360deg);
-                opacity: 0;
-            }
-        }
-        
-        /* 13. 页面考试模式 */
-        .exam-mode-active {
-            filter: grayscale(1) brightness(0.7);
-            pointer-events: none;
-        }
-        
-        .exam-timer {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: var(--dark-card);
-            padding: 30px;
-            border-radius: var(--border-radius);
-            box-shadow: 0 0 100px rgba(0,0,0,0.8);
-            text-align: center;
-            z-index: 10000;
-            display: none;
-        }
-        
-        .exam-timer.visible {
-            display: block;
-        }
-        
-        .exam-time {
-            font-size: 3rem;
-            color: var(--accent-color);
-            font-weight: bold;
-            font-family: monospace;
-        }
-        
-        /* 14. 页面元素高亮标注 */
-        .highlighter {
-            position: fixed;
-            bottom: 100px;
-            left: 20px;
-            background: var(--dark-card);
-            border-radius: var(--border-radius);
-            padding: 10px;
-            box-shadow: var(--box-shadow);
-            border: 1px solid var(--dark-border);
-            z-index: 998;
-            opacity: 0.7;
-            transition: opacity 0.3s;
-        }
-        
-        .highlighter:hover {
-            opacity: 1;
-        }
-        
-        .highlighter-controls {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-        
-        .highlighter-controls button {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-        }
-        
-        .highlighter-controls button:hover {
-            transform: scale(1.1);
-        }
-        
-        .highlighter-controls input[type="color"] {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            border: 2px solid var(--dark-border);
-            cursor: pointer;
-            background: transparent;
-        }
-        
-        .user-highlight {
-            background-color: var(--highlight-color);
-            cursor: pointer;
-            transition: opacity 0.3s;
-        }
-        
-        .user-highlight:hover {
-            opacity: 0.7;
-        }
-        
-        /* 15. 页面AR二维码展示 */
-        .ar-qr-section {
-            margin-top: 40px;
-            padding: 30px;
-            background: linear-gradient(135deg, var(--dark-card) 0%, rgba(108, 99, 255, 0.2) 100%);
-            border-radius: var(--border-radius);
-            text-align: center;
-            border: 1px solid var(--dark-border);
-        }
-        
-        .qr-code {
-            width: 200px;
-            height: 200px;
-            margin: 20px auto;
-            background: white;
-            padding: 10px;
-            border-radius: var(--border-radius);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .qr-code img {
-            max-width: 100%;
-            border-radius: 8px;
-        }
-        
-        .ar-content-preview {
-            margin-top: 20px;
-            padding: 20px;
-            background: var(--dark-bg);
-            border-radius: var(--border-radius);
-            display: none;
-        }
-        
-        .ar-content-preview.visible {
-            display: block;
-            animation: fadeIn 0.5s ease;
-        }
-        
-        .ar-model-viewer {
-            width: 100%;
-            height: 300px;
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
-            border-radius: var(--border-radius);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-        }
-        
-        /* 性能优化：减少动画 */
-        @media (prefers-reduced-motion: reduce) {
-            *,
-            *::before,
-            *::after {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-                scroll-behavior: auto !important;
-            }
-            
-            .loading-indicator.active {
-                animation: none;
-                display: none;
-            }
-            
-            .breathing-light,
-            .pulse {
-                animation: none !important;
-            }
-        }
-        
-        /* 打印样式 */
-        @media print {
-            .smart-sidebar,
-            .sidebar-toggle,
-            .scroll-to-top,
-            .context-menu,
-            .loading-indicator,
-            .bg-animation,
-            .particles,
-            footer,
-            .hero-btns,
-            .contact-form,
-            #pageProgress,
-            #customCursor,
-            #bookmarkBtn,
-            #speechReader,
-            #watermark,
-            #cacheStatus,
-            #dateTimeDisplay,
-            #matrixCanvas,
-            .floating-shape,
-            #developerPanel,
-            .developer-toggle,
-            .advanced-particles,
-            .online-status,
-            .quick-nav,
-            .highlighter {
-                display: none !important;
-            }
-            
-            body {
-                background: white !important;
-                color: black !important;
-                font-size: 12pt !important;
-            }
-            
-            .page {
-                position: static !important;
-                display: block !important;
-                opacity: 1 !important;
-                transform: none !important;
-                min-height: auto !important;
-                padding: 20px 0 !important;
-            }
-            
-            .container {
-                max-width: 100% !important;
-                padding: 0 20px !important;
-            }
-            
-            .feature-card,
-            .project-card,
-            .stat-item,
-            .contact-item {
-                box-shadow: none !important;
-                border: 1px solid #ddd !important;
-                page-break-inside: avoid !important;
-            }
-            
-            .hero h1 {
-                font-size: 24pt !important;
-                color: black !important;
-            }
-            
-            .hero p {
-                font-size: 12pt !important;
-                color: #666 !important;
-            }
-            
-            a {
-                color: black !important;
-                text-decoration: underline !important;
-            }
-            
-            a[data-page]::after {
-                content: " (" attr(href) ")";
-                font-size: 10pt;
-                color: #666;
-            }
-        }
-        
         /* 响应式设计 */
-        @media (max-width: 1200px) {
-            .smart-sidebar {
-                left: 25px;
-            }
-        }
-        
         @media (max-width: 992px) {
             .hero h1 {
                 font-size: 2.8rem;
@@ -2338,13 +1327,6 @@
             
             .about-content, .contact-container {
                 grid-template-columns: 1fr;
-            }
-            
-            #dateTimeDisplay {
-                top: 10px;
-                right: 10px;
-                font-size: 0.8rem;
-                padding: 8px 15px;
             }
             
             .timeline:before {
@@ -2398,25 +1380,6 @@
                 height: 45px;
             }
             
-            #bookmarkBtn, #speechReader, .developer-toggle {
-                bottom: 80px;
-                right: 20px;
-                width: 45px;
-                height: 45px;
-            }
-            
-            #speechReader {
-                bottom: 140px;
-            }
-            
-            .developer-toggle {
-                bottom: 200px;
-            }
-            
-            #dateTimeDisplay {
-                display: none;
-            }
-            
             #developerPanel {
                 width: 90%;
                 right: -100%;
@@ -2424,16 +1387,6 @@
             
             #developerPanel.active {
                 right: 5%;
-            }
-            
-            .quick-nav {
-                bottom: 100px;
-                right: 20px;
-            }
-            
-            .highlighter {
-                bottom: 80px;
-                left: 10px;
             }
         }
         
@@ -2458,30 +1411,8 @@
                 width: 250px;
             }
             
-            .context-menu {
-                min-width: 180px;
-                font-size: 0.9rem;
-            }
-            
             .smart-sidebar {
                 left: 10px;
-            }
-            
-            .developer-buttons {
-                flex-direction: column;
-            }
-            
-            .developer-btn {
-                min-width: 100%;
-            }
-            
-            .reading-progress {
-                bottom: 10px;
-                padding: 8px 15px;
-            }
-            
-            .reading-progress-bar {
-                width: 150px;
             }
         }
         
@@ -2499,10 +1430,6 @@
             .sidebar-toggle:hover {
                 transform: none !important;
             }
-            
-            #customCursor {
-                display: none !important;
-            }
         }
         
         /* 优化字体加载 */
@@ -2510,126 +1437,83 @@
             font-display: swap;
         }
         
-        /* 优化3D模型容器 */
-        .model-placeholder {
-            width: 100%;
-            height: 400px;
-            background: linear-gradient(135deg, var(--dark-card) 0%, var(--dark-border) 100%);
-            border-radius: var(--border-radius);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary-color);
-            font-size: 1.2rem;
-            text-align: center;
-            padding: 20px;
-        }
-        
-        .model-loading {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-        }
-        
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 3px solid rgba(108, 99, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: var(--primary-color);
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        .model-ready {
-            display: none;
-        }
-        
-        /* 快捷提示 */
-        .shortcut-hint {
-            position: fixed;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--dark-card);
-            color: var(--text-muted);
-            padding: 8px 15px;
-            border-radius: var(--border-radius);
-            font-size: 0.8rem;
-            z-index: 1000;
-            opacity: 0.7;
-            transition: opacity 0.3s;
-            border: 1px solid var(--dark-border);
-        }
-        
-        .shortcut-hint:hover {
-            opacity: 1;
+        /* 打印样式 */
+        @media print {
+            .smart-sidebar,
+            .sidebar-toggle,
+            .scroll-to-top,
+            .loading-indicator,
+            .bg-animation,
+            .particles,
+            footer,
+            .hero-btns,
+            .contact-form,
+            #pageProgress,
+            #watermark,
+            .floating-shape,
+            #developerPanel,
+            .advanced-particles,
+            .online-status {
+                display: none !important;
+            }
+            
+            body {
+                background: white !important;
+                color: black !important;
+                font-size: 12pt !important;
+            }
+            
+            .page {
+                position: static !important;
+                display: block !important;
+                opacity: 1 !important;
+                transform: none !important;
+                min-height: auto !important;
+                padding: 20px 0 !important;
+            }
+            
+            .container {
+                max-width: 100% !important;
+                padding: 0 20px !important;
+            }
+            
+            .feature-card,
+            .project-card,
+            .stat-item,
+            .contact-item {
+                box-shadow: none !important;
+                border: 1px solid #ddd !important;
+                page-break-inside: avoid !important;
+            }
+            
+            .hero h1 {
+                font-size: 24pt !important;
+                color: black !important;
+            }
+            
+            .hero p {
+                font-size: 12pt !important;
+                color: #666 !important;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- 加载指示器 -->
-    <div class="loading-indicator" id="loadingIndicator"></div>
-    
     <!-- 页面加载进度条 -->
     <div id="pageProgress"></div>
     
     <!-- 背景动画 -->
     <div class="bg-animation" id="bgAnimation"></div>
     <div class="particles" id="particles"></div>
-    <div class="advanced-particles" id="advancedParticles"></div>
-    
-    <!-- 代码雨背景 -->
-    <canvas id="matrixCanvas"></canvas>
     
     <!-- 页面水印 -->
     <div id="watermark">XCS Studio</div>
     
-    <!-- 新增功能容器 -->
+    <!-- 节日特效容器 -->
     <div id="holidayEffects"></div>
-    <div id="customCursor" class="custom-cursor"></div>
     <div id="onlineStatus" class="online-status">
         <i class="fas fa-circle"></i>
         <span>在线</span>
-    </div>
-    <div id="readingProgress" class="reading-progress">
-        <div class="reading-progress-bar"></div>
-        <div class="reading-progress-text">已阅读: 0%</div>
-    </div>
-    <div id="magnifier" class="magnifier"></div>
-    <div class="highlighter" id="highlighter">
-        <div class="highlighter-controls">
-            <button onclick="startHighlight()" title="开始标注">
-                <i class="fas fa-highlighter"></i>
-            </button>
-            <button onclick="clearHighlights()" title="清除标注">
-                <i class="fas fa-eraser"></i>
-            </button>
-            <input type="color" id="highlightColor" value="#ffff00">
-        </div>
-    </div>
-    <div class="quick-nav" id="quickNav">
-        <button class="quick-nav-btn" onclick="switchPage('home')">
-            <i class="fas fa-home"></i>
-            <span>首页</span>
-        </button>
-        <button class="quick-nav-btn" onclick="switchPage('projects')">
-            <i class="fas fa-rocket"></i>
-            <span>项目</span>
-        </button>
-        <button class="quick-nav-btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-            <i class="fas fa-arrow-up"></i>
-            <span>顶部</span>
-        </button>
-        <button class="quick-nav-btn" onclick="window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'})">
-            <i class="fas fa-arrow-down"></i>
-            <span>底部</span>
-        </button>
     </div>
     
     <!-- 智能侧边栏 -->
@@ -2679,15 +1563,6 @@
                 </div>
                 <button class="btn btn-small" id="themeToggleBtn">切换</button>
             </div>
-            
-            <div class="language-selector">
-                <select id="languageSelect">
-                    <option value="zh">中文</option>
-                    <option value="en">English</option>
-                    <option value="ja">日本語</option>
-                    <option value="ko">한국어</option>
-                </select>
-            </div>
         </div>
     </div>
 
@@ -2705,7 +1580,7 @@
                 <div class="developer-control">
                     <label>当前访问次数: <span id="devVisitCount">0</span></label>
                     <div class="developer-buttons">
-                        <button class="developer-btn danger" id="resetVisitCount">归零访问次数</button>
+                        <button class="developer-btn" id="resetVisitCount">归零访问次数</button>
                         <button class="developer-btn" id="refreshVisitCount">刷新统计</button>
                     </div>
                 </div>
@@ -2766,60 +1641,6 @@
                     <p>开发者模式: <span id="devModeState">active</span></p>
                 </div>
             </div>
-            
-            <div class="developer-section">
-                <h4><i class="fas fa-magic"></i> 特效控制</h4>
-                <div class="developer-buttons">
-                    <button class="developer-btn" id="toggleParticles">切换粒子效果</button>
-                    <button class="developer-btn" id="toggleMatrixRain">切换代码雨</button>
-                    <button class="developer-btn" id="runAllAnimations">运行所有动画</button>
-                    <button class="developer-btn" id="screenshotBtn">
-                        <i class="fas fa-camera"></i> 页面截图
-                    </button>
-                    <button class="developer-btn" id="examModeBtn">
-                        <i class="fas fa-graduation-cap"></i> 考试模式
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 右键菜单 -->
-    <div class="context-menu" id="contextMenu">
-        <div class="context-menu-item" data-action="reload">
-            <i class="fas fa-redo"></i>
-            <span>刷新页面</span>
-        </div>
-        <div class="context-menu-item" data-action="theme">
-            <i class="fas fa-moon"></i>
-            <span>切换主题</span>
-        </div>
-        <div class="context-menu-divider"></div>
-        <div class="context-menu-item" data-action="home">
-            <i class="fas fa-home"></i>
-            <span>返回首页</span>
-        </div>
-        <div class="context-menu-item" data-action="projects">
-            <i class="fas fa-project-diagram"></i>
-            <span>查看项目</span>
-        </div>
-        <div class="context-menu-item" data-action="contact">
-            <i class="fas fa-envelope"></i>
-            <span>联系我们</span>
-        </div>
-        <div class="context-menu-divider"></div>
-        <div class="context-menu-item" data-action="copy">
-            <i class="fas fa-copy"></i>
-            <span>复制链接</span>
-        </div>
-        <div class="context-menu-item" data-action="print">
-            <i class="fas fa-print"></i>
-            <span>打印页面</span>
-        </div>
-        <div class="context-menu-divider"></div>
-        <div class="context-menu-item" data-action="developer">
-            <i class="fas fa-code"></i>
-            <span>开发者模式</span>
         </div>
     </div>
 
@@ -2828,30 +1649,6 @@
         <i class="fas fa-arrow-up"></i>
     </button>
     
-    <!-- 书签按钮 -->
-    <button id="bookmarkBtn" title="收藏此页">
-        <i class="far fa-bookmark"></i>
-    </button>
-    
-    <!-- 语音朗读按钮 -->
-    <button id="speechReader" title="朗读页面内容">
-        <i class="fas fa-volume-up"></i>
-    </button>
-    
-    <!-- 开发者模式切换按钮 -->
-    <button class="developer-toggle" id="developerToggle" title="开发者模式">
-        <i class="fas fa-code"></i>
-    </button>
-    
-    <!-- 日期时间显示 -->
-    <div id="dateTimeDisplay"></div>
-    
-    <!-- 缓存状态显示 -->
-    <div id="cacheStatus"></div>
-    
-    <!-- 快捷提示 -->
-    <div class="shortcut-hint" id="shortcutHint">🔍 快捷键: Alt+M 放大镜 | Alt+H 帮助</div>
-
     <!-- 首页 -->
     <section class="page active content-visible" id="homePage">
         <div class="container hero">
@@ -2920,11 +1717,6 @@
                 <p>探索我们的一些代表性作品</p>
             </div>
             
-            <div class="drag-instruction" id="dragInstruction">
-                <i class="fas fa-arrows-alt"></i>
-                <span>拖拽项目卡片可以重新排序</span>
-            </div>
-            
             <div class="projects-filter" id="projectsFilter">
                 <button class="filter-btn active" data-filter="all">全部</button>
                 <button class="filter-btn" data-filter="boardgame">桌游</button>
@@ -2970,30 +1762,6 @@
                         <div class="stat-item will-change-transform card-hover" data-rate="0.05">
                             <div class="stat-number">50+</div>
                             <div class="stat-label">满意客户</div>
-                        </div>
-                    </div>
-                    
-                    <!-- 秘密区域 -->
-                    <div class="secret-section" id="secretSection">
-                        <div class="secret-lock">
-                            <i class="fas fa-lock"></i>
-                            <h4>秘密项目区域</h4>
-                            <p>请输入密码访问我们的秘密项目</p>
-                            <input type="password" id="secretPassword" placeholder="输入密码">
-                            <button onclick="unlockSecretSection()">解锁</button>
-                        </div>
-                        <div class="secret-content" style="display: none;">
-                            <h3>🎉 秘密项目预览</h3>
-                            <p>恭喜你发现了我们的秘密区域！这里展示了一些正在开发中的创新项目。</p>
-                            <div style="margin-top: 20px; padding: 20px; background: var(--dark-bg); border-radius: var(--border-radius);">
-                                <h4>🤫 秘密项目列表</h4>
-                                <ul style="margin-top: 10px; padding-left: 20px;">
-                                    <li>量子计算游戏引擎</li>
-                                    <li>AI驱动的故事生成系统</li>
-                                    <li>全息桌面游戏平台</li>
-                                    <li>神经界面操作系统</li>
-                                </ul>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -3135,29 +1903,6 @@
                             </p>
                         </div>
                     </div>
-                    
-                    <div class="contact-item will-change-transform card-hover" data-rate="0.05">
-                        <div class="contact-icon">
-                            <i class="fas fa-calendar-alt"></i>
-                        </div>
-                        <div>
-                            <h3>办公时间</h3>
-                            <p>周一至周五: 9:00 - 18:00<br>周六: 10:00 - 16:00</p>
-                            <p style="margin-top: 10px; font-size: 0.9rem; color: var(--text-muted);">
-                                <i class="fas fa-moon"></i> 周日休息
-                            </p>
-                        </div>
-                    </div>
-                    
-                    <!-- AR体验区域 -->
-                    <div class="ar-qr-section">
-                        <h3>📱 AR体验</h3>
-                        <p>扫描二维码在增强现实中查看我们的项目</p>
-                        <div class="qr-code" id="arQrCode">
-                            <!-- 动态生成二维码 -->
-                        </div>
-                        <button onclick="generateARContent()" class="btn btn-small">生成AR内容</button>
-                    </div>
                 </div>
                 
                 <div class="contact-form">
@@ -3184,29 +1929,16 @@
                             </select>
                         </div>
                         
-                        <div class="form-group">
-                            <textarea class="form-control" placeholder="您的消息" required></textarea>
-                        </div>
-                        
                         <div class="form-group" style="display: none;" id="devCodeInput">
                             <input type="text" class="form-control" placeholder="开发者代码 (输入开发者实验码进入开发者模式)" id="devCode">
                         </div>
                         
+                        <div class="form-group">
+                            <textarea class="form-control" placeholder="您的消息" required></textarea>
+                        </div>
+                        
                         <button type="submit" class="btn">发送消息</button>
                     </form>
-                    
-                    <!-- 访客留言板 -->
-                    <div class="guestbook">
-                        <h3>👥 访客留言板</h3>
-                        <div class="guestbook-form">
-                            <input type="text" id="guestName" placeholder="您的昵称" maxlength="20">
-                            <textarea id="guestMessage" placeholder="留下您的留言..." maxlength="200"></textarea>
-                            <button onclick="submitGuestMessage()" class="btn btn-small">发布留言</button>
-                        </div>
-                        <div class="guestbook-messages" id="guestbookMessages">
-                            <!-- 留言动态加载 -->
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -3247,16 +1979,6 @@
                         <a href="#" class="social-icon"><i class="fab fa-weixin"></i></a>
                         <a href="#" class="social-icon"><i class="fab fa-github"></i></a>
                         <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="social-icon"><i class="fab fa-linkedin"></i></a>
-                    </div>
-                </div>
-                
-                <div class="footer-newsletter">
-                    <h3>订阅简报</h3>
-                    <p>订阅我们的月度简报，获取最新项目和行业洞察。</p>
-                    <div style="margin-top: 15px;">
-                        <input type="email" placeholder="您的邮箱" style="width: 100%; padding: 12px; border-radius: var(--border-radius); border: 1px solid var(--dark-border); background: var(--dark-bg); color: var(--text-light); margin-bottom: 10px;">
-                        <button class="btn btn-small" style="width: 100%;">订阅</button>
                     </div>
                 </div>
             </div>
@@ -3287,7 +2009,7 @@
             };
         }
 
-        // 性能优化：节流函数 - 优化版本
+        // 性能优化：节流函数
         function throttle(func, limit) {
             let inThrottle;
             return function() {
@@ -3301,7 +2023,7 @@
             };
         }
 
-        // 项目数据 - 新增更多项目
+        // 项目数据
         const projectsData = [
             {
                 id: 1,
@@ -3397,7 +2119,7 @@
 
         // DOM元素缓存
         const DOM = {
-            loadingIndicator: document.getElementById('loadingIndicator'),
+            pageProgress: document.getElementById('pageProgress'),
             smartSidebar: document.getElementById('smartSidebar'),
             sidebarToggle: document.getElementById('sidebarToggle'),
             sidebarPanel: document.getElementById('sidebarPanel'),
@@ -3410,22 +2132,12 @@
             contactForm: document.getElementById('contactForm'),
             bgAnimation: document.getElementById('bgAnimation'),
             particlesContainer: document.getElementById('particles'),
-            advancedParticlesContainer: document.getElementById('advancedParticles'),
             pages: document.querySelectorAll('.page'),
             sidebarNavItems: document.querySelectorAll('.sidebar-nav-item'),
             footerLinks: document.querySelectorAll('.footer-links a'),
-            contextMenu: document.getElementById('contextMenu'),
             scrollToTop: document.getElementById('scrollToTop'),
-            bookmarkBtn: document.getElementById('bookmarkBtn'),
-            speechReader: document.getElementById('speechReader'),
-            dateTimeDisplay: document.getElementById('dateTimeDisplay'),
-            cacheStatus: document.getElementById('cacheStatus'),
             visitCounter: document.getElementById('visitCounter'),
-            pageProgress: document.getElementById('pageProgress'),
-            matrixCanvas: document.getElementById('matrixCanvas'),
-            watermark: document.getElementById('watermark'),
             developerPanel: document.getElementById('developerPanel'),
-            developerToggle: document.getElementById('developerToggle'),
             developerClose: document.getElementById('developerClose'),
             devCodeInput: document.getElementById('devCodeInput'),
             devCode: document.getElementById('devCode'),
@@ -3445,23 +2157,7 @@
             devCurrentPage: document.getElementById('devCurrentPage'),
             devThemeMode: document.getElementById('devThemeMode'),
             devSidebarState: document.getElementById('devSidebarState'),
-            devModeState: document.getElementById('devModeState'),
-            toggleParticles: document.getElementById('toggleParticles'),
-            toggleMatrixRain: document.getElementById('toggleMatrixRain'),
-            runAllAnimations: document.getElementById('runAllAnimations'),
-            screenshotBtn: document.getElementById('screenshotBtn'),
-            examModeBtn: document.getElementById('examModeBtn'),
-            pageSearch: document.getElementById('pageSearch'),
-            searchResults: document.getElementById('searchResults'),
-            secretPassword: document.getElementById('secretPassword'),
-            guestName: document.getElementById('guestName'),
-            guestMessage: document.getElementById('guestMessage'),
-            guestbookMessages: document.getElementById('guestbookMessages'),
-            highlightColor: document.getElementById('highlightColor'),
-            languageSelect: document.getElementById('languageSelect'),
-            arQrCode: document.getElementById('arQrCode'),
-            dragInstruction: document.getElementById('dragInstruction'),
-            shortcutHint: document.getElementById('shortcutHint')
+            devModeState: document.getElementById('devModeState')
         };
 
         // 应用状态
@@ -3469,74 +2165,15 @@
             currentPage: 'home',
             sidebarOpen: false,
             isLightTheme: false,
-            loading: false,
-            initialized: false,
-            contextMenuVisible: false,
-            isReading: false,
-            currentSpeech: null,
-            mouseX: 0,
-            mouseY: 0,
-            cursorX: 0,
-            cursorY: 0,
-            is3DModelLoaded: false,
-            is3DModelSkipped: false,
             animationFrameId: null,
             developerMode: false,
-            particlesEnabled: true,
-            matrixRainEnabled: true,
+            holidayEffectsInterval: null,
             performanceSettings: {
                 targetFPS: 60,
-                particleCount: 30,
-                lastFrameTime: 0,
+                particleCount: 20,
                 frameInterval: 1000 / 60
-            },
-            originalColors: {
-                primary: '#6c63ff',
-                accent: '#ff6584'
-            },
-            isHighlighting: false,
-            highlightColor: '#ffff00',
-            isMagnifierActive: false,
-            isExamMode: false,
-            examTimer: null,
-            translations: {
-                zh: {
-                    home: "首页",
-                    features: "专长领域",
-                    projects: "项目展示",
-                    about: "关于我们",
-                    contact: "联系我们",
-                    team: "团队介绍"
-                },
-                en: {
-                    home: "Home",
-                    features: "Expertise",
-                    projects: "Projects",
-                    about: "About Us",
-                    contact: "Contact",
-                    team: "Our Team"
-                },
-                ja: {
-                    home: "ホーム",
-                    features: "専門分野",
-                    projects: "プロジェクト",
-                    about: "会社概要",
-                    contact: "お問い合わせ",
-                    team: "チーム紹介"
-                },
-                ko: {
-                    home: "홈",
-                    features: "전문 분야",
-                    projects: "프로젝트",
-                    about: "회사 소개",
-                    contact: "연락처",
-                    team: "팀 소개"
-                }
             }
         };
-
-        // 性能优化：使用 passive 事件监听器
-        const passiveOptions = { passive: true };
 
         // 1. 页面加载进度条
         function initPageProgress() {
@@ -3547,43 +2184,50 @@
             }, 50));
         }
 
-        // 2. 高级粒子系统
-        function initAdvancedParticles() {
-            if (!DOM.advancedParticlesContainer) return;
+        // 2. 初始化背景动画（简化版本）
+        function initBackgroundAnimation() {
+            // 只创建3个浮动形状
+            for (let i = 0; i < 3; i++) {
+                const shape = document.createElement('div');
+                shape.classList.add('floating-shape');
+                shape.style.width = `${Math.random() * 80 + 40}px`;
+                shape.style.height = shape.style.width;
+                shape.style.left = `${Math.random() * 100}%`;
+                shape.style.top = `${Math.random() * 100}%`;
+                shape.style.animationDelay = `${Math.random() * 10}s`;
+                shape.style.animationDuration = `${Math.random() * 40 + 20}s`;
+                DOM.bgAnimation.appendChild(shape);
+            }
+        }
+
+        // 3. 初始化粒子效果（性能优化版本）
+        function initParticles() {
+            const particleCount = Math.min(15, Math.floor(window.innerWidth * window.innerHeight / 80000));
             
-            DOM.advancedParticlesContainer.innerHTML = '';
-            
-            const particleCount = state.performanceSettings.particleCount;
             const fragment = document.createDocumentFragment();
             
             for (let i = 0; i < particleCount; i++) {
                 const particle = document.createElement('div');
-                particle.classList.add('advanced-particle');
-                
-                const size = Math.random() * 60 + 20;
-                particle.style.width = `${size}px`;
-                particle.style.height = `${size}px`;
-                
+                particle.classList.add('particle');
+                particle.style.width = `${Math.random() * 1 + 0.5}px`;
+                particle.style.height = particle.style.width;
                 particle.style.left = `${Math.random() * 100}%`;
                 particle.style.top = `${Math.random() * 100}%`;
+                particle.style.backgroundColor = Math.random() > 0.5 ? 'var(--primary-color)' : 'var(--accent-color)';
                 
-                const colors = ['var(--primary-color)', 'var(--accent-color)', '#4a44c6', '#ff6584'];
-                const color = colors[Math.floor(Math.random() * colors.length)];
-                particle.style.background = `radial-gradient(circle, ${color}, transparent)`;
-                
-                const duration = Math.random() * 25 + 15;
+                // 使用CSS动画而非JavaScript动画
+                const duration = Math.random() * 30 + 20;
                 const delay = Math.random() * 5;
-                particle.style.animation = `particleFloat ${duration}s infinite ease-in-out`;
+                particle.style.animation = `float ${duration}s infinite linear`;
                 particle.style.animationDelay = `${delay}s`;
-                particle.style.opacity = `${Math.random() * 0.05 + 0.02}`;
                 
                 fragment.appendChild(particle);
             }
             
-            DOM.advancedParticlesContainer.appendChild(fragment);
+            DOM.particlesContainer.appendChild(fragment);
         }
 
-        // 3. 开发者模式
+        // 4. 开发者模式（只能通过联系表单输入特定代码打开）
         function initDeveloperMode() {
             // 监听联系表单的提交
             DOM.contactForm.addEventListener('submit', function(e) {
@@ -3594,7 +2238,6 @@
                     state.developerMode = true;
                     DOM.devModeState.textContent = 'active';
                     DOM.developerPanel.classList.add('active');
-                    DOM.developerToggle.style.display = 'flex';
                     showNotification('开发者模式已激活!', 'success');
                     updateDeveloperInfo();
                     return;
@@ -3618,15 +2261,8 @@
             });
             
             // 开发者面板控制
-            DOM.developerToggle.addEventListener('click', () => {
-                DOM.developerPanel.classList.toggle('active');
-                DOM.developerToggle.innerHTML = DOM.developerPanel.classList.contains('active') ? 
-                    '<i class="fas fa-times"></i>' : '<i class="fas fa-code"></i>';
-            });
-            
             DOM.developerClose.addEventListener('click', () => {
                 DOM.developerPanel.classList.remove('active');
-                DOM.developerToggle.innerHTML = '<i class="fas fa-code"></i>';
             });
             
             // 开发者功能
@@ -3660,12 +2296,12 @@
             });
             
             DOM.resetColors.addEventListener('click', () => {
-                DOM.primaryColor.value = state.originalColors.primary;
-                DOM.accentColor.value = state.originalColors.accent;
+                DOM.primaryColor.value = '#6c63ff';
+                DOM.accentColor.value = '#ff6584';
                 
-                document.documentElement.style.setProperty('--primary-color', state.originalColors.primary);
-                document.documentElement.style.setProperty('--secondary-color', adjustColor(state.originalColors.primary, -20));
-                document.documentElement.style.setProperty('--accent-color', state.originalColors.accent);
+                document.documentElement.style.setProperty('--primary-color', '#6c63ff');
+                document.documentElement.style.setProperty('--secondary-color', '#4a44c6');
+                document.documentElement.style.setProperty('--accent-color', '#ff6584');
                 
                 showNotification('颜色已重置', 'success');
             });
@@ -3678,46 +2314,10 @@
                 state.performanceSettings.frameInterval = 1000 / fps;
                 state.performanceSettings.particleCount = particles;
                 
-                initAdvancedParticles();
+                // 重新初始化粒子
+                DOM.particlesContainer.innerHTML = '';
+                initParticles();
                 showNotification(`性能设置已应用: ${fps}FPS, ${particles}个粒子`, 'success');
-            });
-            
-            DOM.toggleParticles.addEventListener('click', () => {
-                state.particlesEnabled = !state.particlesEnabled;
-                DOM.advancedParticlesContainer.style.opacity = state.particlesEnabled ? '1' : '0';
-                showNotification(`粒子效果已${state.particlesEnabled ? '开启' : '关闭'}`, 'success');
-            });
-            
-            DOM.toggleMatrixRain.addEventListener('click', () => {
-                state.matrixRainEnabled = !state.matrixRainEnabled;
-                DOM.matrixCanvas.style.opacity = state.matrixRainEnabled ? '0.1' : '0';
-                showNotification(`代码雨效果已${state.matrixRainEnabled ? '开启' : '关闭'}`, 'success');
-            });
-            
-            DOM.runAllAnimations.addEventListener('click', () => {
-                runAllAnimations();
-                showNotification('所有动画已重新运行', 'success');
-            });
-            
-            DOM.screenshotBtn.addEventListener('click', async () => {
-                try {
-                    showNotification('正在生成截图...', 'info');
-                    
-                    // 这里需要html2canvas库，暂时模拟
-                    setTimeout(() => {
-                        showNotification('截图功能需要html2canvas库支持', 'info');
-                    }, 500);
-                } catch (error) {
-                    console.error('截图失败:', error);
-                    showNotification('截图失败，请重试', 'error');
-                }
-            });
-            
-            DOM.examModeBtn.addEventListener('click', () => {
-                const minutes = prompt('设置考试时间 (分钟):', '60');
-                if (minutes && !isNaN(minutes)) {
-                    startExamMode(parseInt(minutes));
-                }
             });
             
             // 侧边栏位置控制
@@ -3759,47 +2359,27 @@
             
             updateVisitCounter();
         }
-        
-        function runAllAnimations() {
-            document.querySelectorAll('.feature-card, .project-card, .stat-item, .contact-item, .team-member, .timeline-item').forEach(el => {
-                el.style.animation = 'none';
-                void el.offsetWidth;
-                el.style.animation = '';
-            });
-        }
 
-        // 4. 优化动画性能
+        // 5. 性能优化动画
         function initPerformanceOptimization() {
-            let lastTime = 0;
-            
-            function animate(time) {
-                const delta = time - lastTime;
-                
-                if (delta >= state.performanceSettings.frameInterval) {
-                    lastTime = time - (delta % state.performanceSettings.frameInterval);
-                    updateMatrixRain();
-                }
-                
-                state.animationFrameId = requestAnimationFrame(animate);
-            }
-            
-            state.animationFrameId = requestAnimationFrame(animate);
-            
-            document.addEventListener('visibilitychange', () => {
-                if (document.hidden) {
-                    if (state.animationFrameId) {
-                        cancelAnimationFrame(state.animationFrameId);
-                        state.animationFrameId = null;
+            // 使用Intersection Observer来懒加载动画
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animated');
                     }
-                } else {
-                    if (!state.animationFrameId) {
-                        state.animationFrameId = requestAnimationFrame(animate);
-                    }
-                }
+                });
+            }, {
+                threshold: 0.1
+            });
+            
+            // 观察所有需要动画的元素
+            document.querySelectorAll('.feature-card, .project-card, .stat-item, .contact-item, .team-member').forEach(el => {
+                observer.observe(el);
             });
         }
 
-        // 5. 页面访问计数器
+        // 6. 页面访问计数器
         function initVisitCounter() {
             let visitCount = localStorage.getItem('xcsVisitCount') || 0;
             visitCount = parseInt(visitCount) + 1;
@@ -3824,7 +2404,7 @@
             }
         }
 
-        // 6. 主题切换
+        // 7. 主题切换
         function toggleTheme() {
             state.isLightTheme = !state.isLightTheme;
             
@@ -3841,33 +2421,31 @@
             }
             
             updateDeveloperInfo();
-            updateParticlesColor();
-            updateMatrixRainColor();
         }
 
-        // 7. 数字滚动统计
+        // 8. 数字滚动统计
         function initAnimatedStats() {
             const statNumbers = document.querySelectorAll('.stat-number');
             
             statNumbers.forEach(stat => {
-                const target = parseInt(stat.textContent);
-                const suffix = stat.textContent.replace(/\d+/g, '');
-                let current = 0;
-                const increment = target / 20;
-                
-                const updateCount = () => {
-                    if (current < target) {
-                        current += increment;
-                        stat.textContent = Math.floor(current) + suffix;
-                        setTimeout(updateCount, 16);
-                    } else {
-                        stat.textContent = target + suffix;
-                    }
-                };
-                
                 const observer = new IntersectionObserver((entries) => {
                     entries.forEach(entry => {
                         if (entry.isIntersecting) {
+                            const target = parseInt(stat.textContent);
+                            const suffix = stat.textContent.replace(/\d+/g, '');
+                            let current = 0;
+                            const increment = target / 20;
+                            
+                            const updateCount = () => {
+                                if (current < target) {
+                                    current += increment;
+                                    stat.textContent = Math.floor(current) + suffix;
+                                    setTimeout(updateCount, 16);
+                                } else {
+                                    stat.textContent = target + suffix;
+                                }
+                            };
+                            
                             updateCount();
                             observer.unobserve(entry.target);
                         }
@@ -3878,1003 +2456,47 @@
             });
         }
 
-        // 8. 页面书签功能
-        function initBookmark() {
-            DOM.bookmarkBtn.addEventListener('click', () => {
-                const pageTitle = document.title;
-                const pageUrl = window.location.href;
-                
-                if (window.sidebar && window.sidebar.addPanel) {
-                    window.sidebar.addPanel(pageTitle, pageUrl, '');
-                } else if (window.external && ('AddFavorite' in window.external)) {
-                    window.external.AddFavorite(pageUrl, pageTitle);
-                } else if (window.opera && window.print) {
-                    DOM.bookmarkBtn.href = pageUrl;
-                    DOM.bookmarkBtn.title = pageTitle;
-                    DOM.bookmarkBtn.rel = 'sidebar';
-                } else {
-                    showNotification('请使用 Ctrl+D 收藏此页面', 'info');
-                }
-            });
-            
-            DOM.bookmarkBtn.addEventListener('mouseenter', () => {
-                DOM.bookmarkBtn.style.transform = 'scale(1.1) rotate(10deg)';
-            });
-            
-            DOM.bookmarkBtn.addEventListener('mouseleave', () => {
-                DOM.bookmarkBtn.style.transform = 'scale(1) rotate(0)';
-            });
-        }
-
-        // 9. 页面分享功能
-        function initShareButtons() {
-            const shareData = {
-                title: document.title,
-                text: '看看这个很棒的创意工作室网站！',
-                url: window.location.href
-            };
-            
-            const heroBtns = document.querySelector('.hero-btns');
-            if (heroBtns) {
-                const shareBtn = document.createElement('a');
-                shareBtn.className = 'btn btn-outline';
-                shareBtn.innerHTML = '<i class="fas fa-share-alt"></i> 分享';
-                shareBtn.href = '#';
-                shareBtn.style.marginLeft = '10px';
-                
-                shareBtn.addEventListener('click', async (e) => {
-                    e.preventDefault();
-                    
-                    if (navigator.share) {
-                        try {
-                            await navigator.share(shareData);
-                        } catch (err) {
-                            console.log('分享取消:', err);
-                        }
-                    } else {
-                        showNotification('请手动复制链接分享', 'info');
-                        navigator.clipboard.writeText(window.location.href)
-                            .then(() => showNotification('链接已复制到剪贴板', 'success'));
-                    }
-                });
-                
-                heroBtns.appendChild(shareBtn);
-            }
-        }
-
-        // 10. 代码雨背景特效
-        function initMatrixRain() {
-            const canvas = DOM.matrixCanvas;
-            const ctx = canvas.getContext('2d');
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            
-            const letters = '01XCSSTUDIO';
-            const fontSize = 14;
-            const columns = canvas.width / fontSize;
-            const drops = [];
-            
-            for (let i = 0; i < columns; i++) {
-                drops[i] = Math.random() * 100;
-            }
-            
-            window.updateMatrixRain = function() {
-                if (!state.matrixRainEnabled) return;
-                
-                ctx.fillStyle = 'rgba(10, 10, 20, 0.04)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                
-                ctx.fillStyle = state.isLightTheme ? '#4a44c6' : '#6c63ff';
-                ctx.font = `${fontSize}px monospace`;
-                
-                for (let i = 0; i < drops.length; i++) {
-                    const text = letters[Math.floor(Math.random() * letters.length)];
-                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                    
-                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                        drops[i] = 0;
-                    }
-                    drops[i]++;
-                }
-            };
-        }
-        
-        function updateMatrixRain() {
-            if (window.updateMatrixRain) {
-                window.updateMatrixRain();
-            }
-        }
-        
-        function updateMatrixRainColor() {
-            // 颜色会在updateMatrixRain中根据主题更新
-        }
-
-        // 11. 页面拖拽排序功能
-        function initDragAndDrop() {
-            const projectsGrid = DOM.projectsGrid;
-            if (!projectsGrid) return;
-            
-            const originalInitProjects = initProjects;
-            window.initProjects = function() {
-                originalInitProjects();
-                
-                setTimeout(() => {
-                    projectsGrid.querySelectorAll('.project-card').forEach(card => {
-                        card.setAttribute('draggable', 'true');
-                        
-                        card.addEventListener('dragstart', (e) => {
-                            e.dataTransfer.setData('text/plain', card.id);
-                            card.classList.add('dragging');
-                            setTimeout(() => {
-                                card.style.opacity = '0.4';
-                            }, 0);
-                        });
-                        
-                        card.addEventListener('dragend', () => {
-                            card.classList.remove('dragging');
-                            card.style.opacity = '1';
-                        });
-                        
-                        card.addEventListener('dragover', (e) => {
-                            e.preventDefault();
-                            card.classList.add('drag-over');
-                        });
-                        
-                        card.addEventListener('dragleave', () => {
-                            card.classList.remove('drag-over');
-                        });
-                        
-                        card.addEventListener('drop', (e) => {
-                            e.preventDefault();
-                            card.classList.remove('drag-over');
-                            const draggedId = e.dataTransfer.getData('text/plain');
-                            const draggedElement = document.getElementById(draggedId);
-                            
-                            if (draggedElement && draggedElement !== card) {
-                                const allCards = [...projectsGrid.querySelectorAll('.project-card')];
-                                const draggedIndex = allCards.indexOf(draggedElement);
-                                const targetIndex = allCards.indexOf(card);
-                                
-                                if (draggedIndex < targetIndex) {
-                                    card.parentNode.insertBefore(draggedElement, card.nextSibling);
-                                } else {
-                                    card.parentNode.insertBefore(draggedElement, card);
-                                }
-                                
-                                showNotification('项目顺序已更新', 'success');
-                                saveProjectOrder();
-                            }
-                        });
-                    });
-                }, 100);
-            };
-        }
-        
-        function saveProjectOrder() {
-            const projectOrder = [...DOM.projectsGrid.querySelectorAll('.project-card')].map(card => card.dataset.id);
-            localStorage.setItem('projectOrder', JSON.stringify(projectOrder));
-        }
-        
-        function loadProjectOrder() {
-            const savedOrder = JSON.parse(localStorage.getItem('projectOrder'));
-            if (savedOrder && projectsData) {
-                projectsData.sort((a, b) => {
-                    return savedOrder.indexOf(a.id.toString()) - savedOrder.indexOf(b.id.toString());
-                });
-            }
-        }
-
-        // 12. 页面水印保护
-        function initWatermark() {
-            document.addEventListener('contextmenu', (e) => {
-                if (e.target.tagName === 'IMG') {
-                    showNotification('图片受保护，请联系我们获取授权', 'info');
-                    e.preventDefault();
-                }
-            });
-            
-            document.addEventListener('dragstart', (e) => {
-                if (e.target.tagName === 'IMG') {
-                    e.preventDefault();
-                }
-            });
-        }
-
-        // 13. 页面语音朗读
-        function initSpeechReader() {
-            if (!('speechSynthesis' in window)) {
-                DOM.speechReader.style.display = 'none';
-                return;
-            }
-            
-            DOM.speechReader.addEventListener('click', () => {
-                if (state.isReading) {
-                    speechSynthesis.cancel();
-                    state.isReading = false;
-                    DOM.speechReader.innerHTML = '<i class="fas fa-volume-up"></i>';
-                    DOM.speechReader.title = '朗读页面内容';
-                    DOM.speechReader.style.background = 'var(--primary-color)';
-                } else {
-                    const pageContent = document.querySelector('.page.active');
-                    if (!pageContent) return;
-                    
-                    const text = pageContent.innerText
-                        .replace(/\s+/g, ' ')
-                        .substring(0, 1000);
-                    
-                    state.currentSpeech = new SpeechSynthesisUtterance(text);
-                    state.currentSpeech.lang = 'zh-CN';
-                    state.currentSpeech.rate = 0.9;
-                    state.currentSpeech.pitch = 1;
-                    
-                    state.currentSpeech.onstart = () => {
-                        state.isReading = true;
-                        DOM.speechReader.innerHTML = '<i class="fas fa-stop"></i>';
-                        DOM.speechReader.title = '停止朗读';
-                        DOM.speechReader.style.background = 'var(--accent-color)';
-                    };
-                    
-                    state.currentSpeech.onend = () => {
-                        state.isReading = false;
-                        DOM.speechReader.innerHTML = '<i class="fas fa-volume-up"></i>';
-                        DOM.speechReader.title = '朗读页面内容';
-                        DOM.speechReader.style.background = 'var(--primary-color)';
-                    };
-                    
-                    speechSynthesis.speak(state.currentSpeech);
-                }
-            });
-            
-            DOM.speechReader.addEventListener('mouseenter', () => {
-                DOM.speechReader.style.transform = 'scale(1.1)';
-            });
-            
-            DOM.speechReader.addEventListener('mouseleave', () => {
-                DOM.speechReader.style.transform = 'scale(1)';
-            });
-        }
-
-        // 14. 页面离线访问支持
-        function initOfflineSupport() {
-            const updateOnlineStatus = () => {
-                const onlineStatus = document.getElementById('onlineStatus');
-                if (navigator.onLine) {
-                    onlineStatus.classList.remove('offline');
-                    onlineStatus.querySelector('span').textContent = '在线';
-                    onlineStatus.querySelector('i').style.color = '#4caf50';
-                } else {
-                    onlineStatus.classList.add('offline');
-                    onlineStatus.querySelector('span').textContent = '离线';
-                    onlineStatus.querySelector('i').style.color = '#ff5252';
-                    showNotification('您当前处于离线状态，部分功能可能受限', 'warning');
-                }
-            };
-            
-            window.addEventListener('online', updateOnlineStatus);
-            window.addEventListener('offline', updateOnlineStatus);
-            
-            updateOnlineStatus();
-            
-            if (navigator.storage && navigator.storage.estimate) {
-                navigator.storage.estimate().then(estimate => {
-                    const percent = (estimate.usage / estimate.quota * 100).toFixed(1);
-                    DOM.cacheStatus.textContent = `存储使用: ${percent}%`;
-                    DOM.cacheStatus.style.display = 'block';
-                    
-                    setTimeout(() => {
-                        DOM.cacheStatus.style.display = 'none';
-                    }, 3000);
-                });
-            }
-        }
-
-        // 15. 页面时钟和日期显示
-        function initDateTimeDisplay() {
-            function updateDateTime() {
-                const now = new Date();
-                const dateStr = now.toLocaleDateString('zh-CN', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                    weekday: 'long'
-                });
-                const timeStr = now.toLocaleTimeString('zh-CN', {
-                    hour12: false,
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit'
-                });
-                
-                DOM.dateTimeDisplay.innerHTML = `
-                    <div style="font-weight: 500;">${dateStr}</div>
-                    <div style="color: var(--primary-color); font-weight: 600;">${timeStr}</div>
-                `;
-            }
-            
-            updateDateTime();
-            setInterval(updateDateTime, 1000);
-            
-            DOM.dateTimeDisplay.addEventListener('mouseenter', () => {
-                DOM.dateTimeDisplay.style.transform = 'translateY(5px)';
-                DOM.dateTimeDisplay.style.boxShadow = '0 15px 30px rgba(0,0,0,0.3)';
-            });
-            
-            DOM.dateTimeDisplay.addEventListener('mouseleave', () => {
-                DOM.dateTimeDisplay.style.transform = '';
-                DOM.dateTimeDisplay.style.boxShadow = 'var(--box-shadow)';
-            });
-        }
-
-        // 16. 自定义鼠标光标
-        function initCustomCursor() {
-            const cursor = document.getElementById('customCursor');
-            
-            document.addEventListener('mousemove', (e) => {
-                cursor.style.left = e.clientX + 'px';
-                cursor.style.top = e.clientY + 'px';
-            });
-            
-            const interactiveElements = document.querySelectorAll('a, button, .project-card, .feature-card, .sidebar-nav-item');
-            interactiveElements.forEach(el => {
-                el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
-                el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
-            });
-            
-            document.addEventListener('mousedown', () => cursor.classList.add('click'));
-            document.addEventListener('mouseup', () => cursor.classList.remove('click'));
-        }
-
-        // 17. 页面阅读进度指示器
-        function initReadingProgress() {
-            const progressEl = document.getElementById('readingProgress');
-            const progressBar = progressEl.querySelector('.reading-progress-bar');
-            const progressText = progressEl.querySelector('.reading-progress-text');
-            
-            function updateReadingProgress() {
-                const pageHeight = document.documentElement.scrollHeight - window.innerHeight;
-                const scrolled = window.pageYOffset;
-                const progress = Math.min(100, Math.round((scrolled / pageHeight) * 100));
-                
-                progressBar.style.setProperty('--progress-width', `${progress}%`);
-                progressText.textContent = `已阅读: ${progress}%`;
-                
-                if (progress > 5 && progress < 95) {
-                    progressEl.classList.add('visible');
-                } else {
-                    progressEl.classList.remove('visible');
-                }
-            }
-            
-            window.addEventListener('scroll', throttle(updateReadingProgress, 100));
-            updateReadingProgress();
-        }
-
-        // 18. 页面内容搜索功能
-        function initPageSearch() {
-            const searchInput = DOM.pageSearch;
-            const searchResults = DOM.searchResults;
-            
-            searchInput.addEventListener('input', debounce((e) => {
-                const searchTerm = e.target.value.trim().toLowerCase();
-                
-                if (searchTerm.length < 2) {
-                    searchResults.classList.remove('visible');
-                    searchResults.innerHTML = '';
-                    return;
-                }
-                
-                const currentPage = document.querySelector('.page.active');
-                const pageText = currentPage.textContent.toLowerCase();
-                const searchIndex = pageText.indexOf(searchTerm);
-                
-                if (searchIndex === -1) {
-                    searchResults.innerHTML = '<div class="search-result-item">未找到匹配内容</div>';
-                } else {
-                    const contextStart = Math.max(0, searchIndex - 50);
-                    const contextEnd = Math.min(pageText.length, searchIndex + searchTerm.length + 50);
-                    let context = pageText.substring(contextStart, contextEnd);
-                    
-                    context = context.replace(
-                        new RegExp(searchTerm, 'gi'),
-                        match => `<span class="search-highlight">${match}</span>`
-                    );
-                    
-                    if (contextStart > 0) context = '...' + context;
-                    if (contextEnd < pageText.length) context += '...';
-                    
-                    searchResults.innerHTML = `
-                        <div class="search-result-item" onclick="scrollToSearchResult(${searchIndex})">
-                            <strong>在页面中找到:</strong><br>
-                            ${context}
-                        </div>
-                    `;
-                }
-                
-                searchResults.classList.add('visible');
-            }, 300));
-            
-            document.addEventListener('click', (e) => {
-                if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
-                    searchResults.classList.remove('visible');
-                }
-            });
-        }
-
-        function scrollToSearchResult(position) {
-            // 简化实现
-            showNotification('搜索功能已定位到相关内容', 'success');
-        }
-
-        // 19. 页面密码保护区域
-        function unlockSecretSection() {
-            const password = DOM.secretPassword.value;
-            const secretSection = document.getElementById('secretSection');
-            
-            if (password === 'xcs2023' || password === 'devmode') {
-                secretSection.querySelector('.secret-lock').style.display = 'none';
-                secretSection.querySelector('.secret-content').style.display = 'block';
-                showNotification('🔓 秘密区域已解锁！', 'success');
-            } else {
-                showNotification('❌ 密码错误！', 'error');
-                DOM.secretPassword.style.borderColor = 'var(--accent-color)';
-                setTimeout(() => {
-                    DOM.secretPassword.style.borderColor = '';
-                }, 1000);
-            }
-        }
-
-        // 20. 页面访客留言板
-        function initGuestbook() {
-            loadGuestMessages();
-            
-            setInterval(loadGuestMessages, 30000);
-        }
-        
-        function loadGuestMessages() {
-            const messagesEl = DOM.guestbookMessages;
-            const messages = JSON.parse(localStorage.getItem('xcsGuestbook') || '[]');
-            
-            if (messages.length === 0) {
-                messagesEl.innerHTML = '<p style="text-align: center; color: var(--text-muted);">还没有留言，快来第一个留言吧！</p>';
-                return;
-            }
-            
-            messagesEl.innerHTML = messages.slice(-10).reverse().map(msg => `
-                <div class="guestbook-message">
-                    <div class="message-header">
-                        <span class="message-author">${escapeHtml(msg.name)}</span>
-                        <span class="message-time">${formatTime(msg.timestamp)}</span>
-                    </div>
-                    <div class="message-content">${escapeHtml(msg.message)}</div>
-                </div>
-            `).join('');
-        }
-        
-        function submitGuestMessage() {
-            const name = DOM.guestName.value.trim();
-            const message = DOM.guestMessage.value.trim();
-            
-            if (!name || !message) {
-                showNotification('请填写昵称和留言内容', 'error');
-                return;
-            }
-            
-            if (name.length > 20) {
-                showNotification('昵称不能超过20个字符', 'error');
-                return;
-            }
-            
-            if (message.length > 200) {
-                showNotification('留言不能超过200个字符', 'error');
-                return;
-            }
-            
-            const messages = JSON.parse(localStorage.getItem('xcsGuestbook') || '[]');
-            messages.push({
-                name,
-                message,
-                timestamp: Date.now()
-            });
-            
-            localStorage.setItem('xcsGuestbook', JSON.stringify(messages));
-            
-            DOM.guestName.value = '';
-            DOM.guestMessage.value = '';
-            
-            loadGuestMessages();
-            showNotification('留言发布成功！', 'success');
-        }
-        
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-        
-        function formatTime(timestamp) {
-            const date = new Date(timestamp);
-            const now = new Date();
-            const diff = now - date;
-            
-            if (diff < 60000) return '刚刚';
-            if (diff < 3600000) return `${Math.floor(diff / 60000)}分钟前`;
-            if (diff < 86400000) return `${Math.floor(diff / 3600000)}小时前`;
-            return date.toLocaleDateString('zh-CN');
-        }
-
-        // 21. 页面元素放大镜
-        function initMagnifier() {
-            const magnifier = document.getElementById('magnifier');
-            
-            document.addEventListener('keydown', (e) => {
-                if (e.altKey && e.key === 'm') {
-                    state.isMagnifierActive = !state.isMagnifierActive;
-                    magnifier.classList.toggle('active', state.isMagnifierActive);
-                    showNotification(`放大镜 ${state.isMagnifierActive ? '开启' : '关闭'} (Alt+M)`, 'info');
-                }
-            });
-            
-            if (state.isMagnifierActive) {
-                document.addEventListener('mousemove', (e) => {
-                    magnifier.style.left = e.clientX + 'px';
-                    magnifier.style.top = e.clientY + 'px';
-                    
-                    const x = e.clientX - 100;
-                    const y = e.clientY - 100;
-                    
-                    magnifier.style.background = `radial-gradient(circle at ${x}px ${y}px, 
-                        transparent 0%, 
-                        rgba(0,0,0,0.1) 30%,
-                        rgba(0,0,0,0.3) 70%,
-                        rgba(0,0,0,0.5) 100%)`;
-                });
-            }
-        }
-
-        // 22. 页面翻译功能
-        function initTranslation() {
-            const languageSelect = DOM.languageSelect;
-            const savedLang = localStorage.getItem('preferredLanguage') || 'zh';
-            
-            languageSelect.value = savedLang;
-            
-            languageSelect.addEventListener('change', (e) => {
-                const lang = e.target.value;
-                localStorage.setItem('preferredLanguage', lang);
-                applyTranslation(lang);
-            });
-            
-            applyTranslation(savedLang);
-        }
-        
-        function applyTranslation(lang) {
-            document.querySelectorAll('[data-page]').forEach(el => {
-                const page = el.dataset.page;
-                if (state.translations[lang] && state.translations[lang][page]) {
-                    const span = el.querySelector('span');
-                    if (span) span.textContent = state.translations[lang][page];
-                }
-            });
-            
-            const titleMap = {
-                zh: "XCS Studio - 创意数字体验",
-                en: "XCS Studio - Creative Digital Experiences",
-                ja: "XCS Studio - 創造的なデジタル体験",
-                ko: "XCS Studio - 창의적인 디지털 경험"
-            };
-            
-            document.title = titleMap[lang] || titleMap.zh;
-            
-            showNotification(`语言已切换为: ${languageSelect.options[languageSelect.selectedIndex].text}`, 'success');
-        }
-
-        // 23. 页面节日特效
-        function initHolidayEffects() {
-            const today = new Date();
-            const month = today.getMonth() + 1;
-            const date = today.getDate();
-            
-            let holidayEffect = null;
-            
-            if (month === 12) {
-                holidayEffect = 'snow';
-                document.body.classList.add('christmas');
-            }
-            else if (month === 1 && date >= 15 && date <= 30) {
-                holidayEffect = 'confetti';
-                document.body.classList.add('spring-festival');
-            }
-            else if (month === 10 && date >= 1 && date <= 7) {
-                holidayEffect = 'confetti';
-                document.body.classList.add('national-day');
-            }
-            else if (month === 6 && date === 1) {
-                holidayEffect = 'confetti';
-                document.body.classList.add('anniversary');
-            }
-            
-            if (holidayEffect) {
-                createHolidayEffect(holidayEffect);
-            }
-        }
-        
-        function createHolidayEffect(type) {
-            const container = document.getElementById('holidayEffects');
-            const effectCount = type === 'snow' ? 50 : 30;
-            
-            for (let i = 0; i < effectCount; i++) {
-                setTimeout(() => {
-                    const element = document.createElement('div');
-                    element.className = type === 'snow' ? 'snowflake' : 'confetti';
-                    
-                    if (type === 'snow') {
-                        element.innerHTML = '❄';
-                        element.style.left = Math.random() * 100 + '%';
-                        element.style.animationDuration = Math.random() * 3 + 5 + 's';
-                        element.style.animationDelay = Math.random() * 5 + 's';
-                        element.style.fontSize = Math.random() * 10 + 10 + 'px';
-                    } else {
-                        const colors = ['#ff6584', '#6c63ff', '#4caf50', '#ffeb3b', '#ff9800'];
-                        element.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                        element.style.left = Math.random() * 100 + '%';
-                        element.style.animationDuration = Math.random() * 2 + 3 + 's';
-                        element.style.animationDelay = Math.random() * 3 + 's';
-                        element.style.borderRadius = '50%';
-                    }
-                    
-                    container.appendChild(element);
-                    
-                    setTimeout(() => {
-                        if (element.parentNode) {
-                            element.parentNode.removeChild(element);
-                        }
-                    }, 10000);
-                }, i * 200);
-            }
-            
-            setInterval(() => createHolidayEffect(type), 8000);
-        }
-
-        // 24. 页面考试模式
-        function startExamMode(minutes) {
-            document.body.classList.add('exam-mode-active');
-            
-            const examTimer = document.createElement('div');
-            examTimer.className = 'exam-timer visible';
-            examTimer.innerHTML = `
-                <h3>📚 考试模式已启动</h3>
-                <div class="exam-time" id="examTime">${minutes}:00</div>
-                <p>剩余时间</p>
-                <button onclick="endExamMode()" style="margin-top: 20px;" class="btn">结束考试</button>
-            `;
-            
-            document.body.appendChild(examTimer);
-            
-            let timeLeft = minutes * 60;
-            const timerInterval = setInterval(() => {
-                timeLeft--;
-                
-                const mins = Math.floor(timeLeft / 60);
-                const secs = timeLeft % 60;
-                document.getElementById('examTime').textContent = 
-                    `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-                
-                if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    endExamMode();
-                    showNotification('⏰ 考试时间到！', 'warning');
-                }
-                
-                if (timeLeft === 5 * 60) {
-                    showNotification('⚠️ 距离考试结束还有5分钟！', 'warning');
-                }
-            }, 1000);
-            
-            state.examTimer = timerInterval;
-            state.isExamMode = true;
-            
-            window.endExamMode = function() {
-                clearInterval(state.examTimer);
-                state.isExamMode = false;
-                document.body.classList.remove('exam-mode-active');
-                examTimer.remove();
-                showNotification('✅ 考试模式已结束', 'success');
-            };
-        }
-
-        // 25. 页面元素高亮标注
-        function initHighlighter() {
-            document.getElementById('highlightColor').addEventListener('input', (e) => {
-                state.highlightColor = e.target.value;
-                document.documentElement.style.setProperty('--highlight-color', state.highlightColor);
-            });
-            
-            loadHighlights();
-        }
-        
-        function startHighlight() {
-            state.isHighlighting = !state.isHighlighting;
-            
-            if (state.isHighlighting) {
-                document.body.style.cursor = 'url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 width=%2724%27 height=%2724%27%3E%3Cpath fill=%27" + encodeURIComponent(state.highlightColor) + "%27 d=%27M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z%27/%3E%3C/svg%3E"), auto';
-                
-                document.addEventListener('mouseup', highlightSelection);
-                showNotification('🖍️ 标注模式已开启，选择文本进行标注', 'info');
-            } else {
-                document.body.style.cursor = '';
-                document.removeEventListener('mouseup', highlightSelection);
-                showNotification('标注模式已关闭', 'info');
-            }
-        }
-        
-        function highlightSelection() {
-            const selection = window.getSelection();
-            if (!selection.rangeCount || selection.toString().length < 1) return;
-            
-            const range = selection.getRangeAt(0);
-            const span = document.createElement('span');
-            span.className = 'user-highlight';
-            span.style.backgroundColor = state.highlightColor;
-            span.textContent = selection.toString();
-            
-            range.deleteContents();
-            range.insertNode(span);
-            
-            saveHighlight(span);
-            
-            selection.removeAllRanges();
-        }
-        
-        function saveHighlight(element) {
-            const highlights = JSON.parse(localStorage.getItem('pageHighlights') || '[]');
-            const rect = element.getBoundingClientRect();
-            
-            highlights.push({
-                text: element.textContent,
-                color: state.highlightColor,
-                page: state.currentPage,
-                position: {
-                    top: rect.top + window.scrollY,
-                    left: rect.left + window.scrollX
-                }
-            });
-            
-            localStorage.setItem('pageHighlights', JSON.stringify(highlights));
-        }
-        
-        function loadHighlights() {
-            const highlights = JSON.parse(localStorage.getItem('pageHighlights') || '[]');
-            
-            highlights.forEach(highlight => {
-                if (highlight.page === state.currentPage) {
-                    // 根据位置信息恢复标注
-                    // 注意：这是一个简化版本，实际实现需要更复杂的DOM操作
-                }
-            });
-        }
-        
-        function clearHighlights() {
-            document.querySelectorAll('.user-highlight').forEach(el => el.remove());
-            localStorage.removeItem('pageHighlights');
-            showNotification('所有标注已清除', 'success');
-        }
-
-        // 26. 页面AR二维码展示
-        function initARQRCode() {
-            generateQRCode(window.location.href);
-        }
-        
-        function generateQRCode(text) {
-            const qrContainer = DOM.arQrCode;
-            
-            qrContainer.innerHTML = `
-                <div style="
-                    display: grid;
-                    grid-template-columns: repeat(21, 1fr);
-                    width: 180px;
-                    height: 180px;
-                    gap: 1px;
-                    background: white;
-                ">
-                    ${Array(441).fill().map((_, i) => {
-                        const x = i % 21;
-                        const y = Math.floor(i / 21);
-                        const shouldFill = (x * y) % 3 === 0 || (x + y) % 4 === 0;
-                        return `<div style="background: ${shouldFill ? 'black' : 'white'}"></div>`;
-                    }).join('')}
-                </div>
-            `;
-        }
-        
-        function generateARContent() {
-            const preview = document.createElement('div');
-            preview.className = 'ar-content-preview';
-            preview.innerHTML = `
-                <h4>AR内容预览</h4>
-                <div class="ar-model-viewer">
-                    <div class="model-placeholder">
-                        <div class="model-loading">
-                            <div class="loading-spinner"></div>
-                            <p>正在加载3D模型...</p>
-                        </div>
-                        <div class="model-ready">
-                            <!-- 3D模型将在这里显示 -->
-                        </div>
-                    </div>
-                </div>
-                <p style="margin-top: 15px; font-size: 0.9rem; color: var(--text-muted);">
-                    <i class="fas fa-mobile-alt"></i> 使用支持AR的设备扫描上方二维码体验
-                </p>
-                <div style="margin-top: 20px;">
-                    <button class="btn btn-small" onclick="shareARContent()">
-                        <i class="fas fa-share"></i> 分享AR体验
-                    </button>
-                </div>
-            `;
-            
-            document.querySelector('.ar-qr-section').appendChild(preview);
-            preview.classList.add('visible');
-            
-            setTimeout(() => {
-                preview.querySelector('.model-loading').style.display = 'none';
-                preview.querySelector('.model-ready').innerHTML = `
-                    <div style="text-align: center; padding: 20px;">
-                        <i class="fas fa-cube" style="font-size: 4rem; color: white;"></i>
-                        <p style="margin-top: 15px; color: white;">XCS Studio 3D模型</p>
-                        <button class="btn btn-small" style="margin-top: 15px;" 
-                                onclick="rotateModel()">旋转模型</button>
-                    </div>
-                `;
-                preview.querySelector('.model-ready').style.display = 'block';
-            }, 2000);
-            
-            const arData = {
-                title: 'XCS Studio AR体验',
-                url: 'https://xcs-studio.com/ar-experience',
-                model: 'studio-model.glb',
-                timestamp: Date.now()
-            };
-            
-            generateQRCode(JSON.stringify(arData));
-            showNotification('🎮 AR内容已生成！', 'success');
-        }
-        
-        function rotateModel() {
-            const modelViewer = document.querySelector('.ar-model-viewer');
-            let rotation = 0;
-            
-            function animate() {
-                rotation += 1;
-                modelViewer.style.transform = `rotateY(${rotation}deg)`;
-                if (rotation < 360) {
-                    requestAnimationFrame(animate);
-                }
-            }
-            
-            animate();
-        }
-        
-        function shareARContent() {
-            if (navigator.share) {
-                navigator.share({
-                    title: 'XCS Studio AR体验',
-                    text: '扫描二维码体验我们的增强现实内容',
-                    url: window.location.href
-                });
-            } else {
-                showNotification('AR体验链接已复制到剪贴板', 'success');
-                navigator.clipboard.writeText(window.location.href);
-            }
-        }
-
-        // 以下是原有功能
-
-        // 显示加载指示器
-        function showLoading() {
-            if (!state.loading) {
-                state.loading = true;
-                DOM.loadingIndicator.classList.add('active');
-            }
-        }
-
-        // 隐藏加载指示器
-        function hideLoading() {
-            if (state.loading) {
-                state.loading = false;
-                DOM.loadingIndicator.classList.remove('active');
-            }
-        }
-
-        // 初始化背景动画
-        function initBackgroundAnimation() {
-            for (let i = 0; i < 3; i++) {
-                const shape = document.createElement('div');
-                shape.classList.add('floating-shape');
-                shape.style.width = `${Math.random() * 100 + 40}px`;
-                shape.style.height = shape.style.width;
-                shape.style.left = `${Math.random() * 100}%`;
-                shape.style.top = `${Math.random() * 100}%`;
-                shape.style.animationDelay = `${Math.random() * 10}s`;
-                shape.style.animationDuration = `${Math.random() * 40 + 20}s`;
-                DOM.bgAnimation.appendChild(shape);
-            }
-        }
-
-        // 初始化优化粒子效果
-        function initParticles() {
-            const particleCount = Math.min(20, Math.floor(window.innerWidth * window.innerHeight / 50000));
-            
-            const fragment = document.createDocumentFragment();
-            
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.classList.add('particle');
-                particle.style.width = `${Math.random() * 1.2 + 0.3}px`;
-                particle.style.height = particle.style.width;
-                particle.style.left = `${Math.random() * 100}%`;
-                particle.style.top = `${Math.random() * 100}%`;
-                particle.style.backgroundColor = Math.random() > 0.5 ? 'var(--primary-color)' : 'var(--accent-color)';
-                
-                const duration = Math.random() * 30 + 20;
-                const delay = Math.random() * 5;
-                particle.style.animation = `float ${duration}s infinite linear`;
-                particle.style.animationDelay = `${delay}s`;
-                
-                fragment.appendChild(particle);
-            }
-            
-            DOM.particlesContainer.appendChild(fragment);
-        }
-
-        // 更新粒子颜色
-        function updateParticlesColor() {
-            const particles = document.querySelectorAll('.particle');
-            particles.forEach(particle => {
-                particle.style.backgroundColor = Math.random() > 0.5 ? 'var(--primary-color)' : 'var(--accent-color)';
-            });
-        }
-
-        // 页面切换
+        // 9. 页面切换（带过渡动画）
         function switchPage(pageId) {
             if (state.currentPage === pageId) return;
-            
-            showLoading();
             
             const currentPage = document.getElementById(`${state.currentPage}Page`);
             const targetPage = document.getElementById(`${pageId}Page`);
             
             if (currentPage && targetPage) {
-                currentPage.classList.remove('active');
-                targetPage.classList.add('active');
+                // 添加离开动画
+                currentPage.classList.add('leaving');
+                
+                // 等待动画完成
+                setTimeout(() => {
+                    currentPage.classList.remove('active');
+                    currentPage.classList.remove('leaving');
+                    targetPage.classList.add('active');
+                    state.currentPage = pageId;
+                    
+                    // 滚动到顶部
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                    
+                    // 如果是项目页面，初始化项目
+                    if (pageId === 'projects') {
+                        setTimeout(initProjects, 100);
+                    }
+                    
+                    updateSidebarNav(pageId);
+                    updateDeveloperInfo();
+                    
+                    // 在移动设备上关闭侧边栏
+                    if (window.innerWidth < 768) {
+                        closeSidebar();
+                    }
+                }, 400);
             }
-            
-            requestAnimationFrame(() => {
-                state.currentPage = pageId;
-                
-                updateSidebarNav(pageId);
-                
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
-                
-                if (pageId === 'projects') {
-                    setTimeout(initProjects, 100);
-                }
-                
-                updateDeveloperInfo();
-                
-                if (window.innerWidth < 768) {
-                    closeSidebar();
-                }
-                
-                hideContextMenu();
-                
-                setTimeout(hideLoading, 200);
-            });
         }
 
-        // 更新侧边栏导航
+        // 10. 更新侧边栏导航
         function updateSidebarNav(pageId) {
             DOM.sidebarNavItems.forEach(item => {
                 item.classList.remove('active');
@@ -4884,9 +2506,9 @@
             });
         }
 
-        // 初始化项目展示
+        // 11. 初始化项目展示
         function initProjects() {
-            if (state.initialized && DOM.projectsGrid.children.length > 0) return;
+            if (DOM.projectsGrid.children.length > 0) return;
             
             DOM.projectsGrid.innerHTML = '';
             
@@ -4894,7 +2516,7 @@
             
             projectsData.forEach((project, index) => {
                 const projectCard = document.createElement('div');
-                projectCard.className = `project-card ${project.category} card-hover`;
+                projectCard.className = `project-card ${project.category}`;
                 projectCard.dataset.category = project.category;
                 projectCard.id = `project-${project.id}`;
                 projectCard.dataset.id = project.id;
@@ -4909,7 +2531,7 @@
                         <div class="project-tags">
                             <span class="project-tag">${getCategoryLabel(project.category)}</span>
                             <span class="project-tag">${project.year}</span>
-                            <span class="project-tag ${project.status === '已发布' ? 'published' : 'developing'}">${project.status}</span>
+                            <span class="project-tag">${project.status}</span>
                         </div>
                     </div>
                 `;
@@ -4919,6 +2541,7 @@
             
             DOM.projectsGrid.appendChild(fragment);
             
+            // 延迟显示动画
             setTimeout(() => {
                 const cards = DOM.projectsGrid.querySelectorAll('.project-card');
                 cards.forEach((card, index) => {
@@ -4927,11 +2550,9 @@
                     }, index * 30);
                 });
             }, 50);
-            
-            state.initialized = true;
         }
 
-        // 获取分类标签
+        // 12. 获取分类标签
         function getCategoryLabel(category) {
             const labels = {
                 'boardgame': '桌游',
@@ -4942,7 +2563,7 @@
             return labels[category] || '其他';
         }
 
-        // 项目过滤功能
+        // 13. 项目过滤功能
         function initProjectFilter() {
             DOM.filterButtons.forEach(button => {
                 button.addEventListener('click', function() {
@@ -4965,7 +2586,7 @@
             });
         }
 
-        // 切换侧边栏
+        // 14. 切换侧边栏
         function toggleSidebar() {
             if (state.sidebarOpen) {
                 closeSidebar();
@@ -4974,21 +2595,21 @@
             }
         }
 
-        // 打开侧边栏
+        // 15. 打开侧边栏
         function openSidebar() {
             DOM.sidebarPanel.classList.add('active');
             DOM.sidebarToggle.style.transform = 'translateY(-50%) rotate(90deg)';
             state.sidebarOpen = true;
             
             DOM.sidebarNavItems.forEach((item, index) => {
-                item.style.animation = `slideInLeft 0.3s ease ${index * 0.1}s forwards`;
+                item.style.animation = `fadeInLeft 0.3s ease ${index * 0.1}s forwards`;
                 item.style.opacity = '0';
             });
             
             updateDeveloperInfo();
         }
 
-        // 关闭侧边栏
+        // 16. 关闭侧边栏
         function closeSidebar() {
             DOM.sidebarPanel.classList.remove('active');
             DOM.sidebarToggle.style.transform = 'translateY(-50%)';
@@ -5002,7 +2623,7 @@
             updateDeveloperInfo();
         }
 
-        // 表单提交处理
+        // 17. 表单提交处理
         function initContactForm() {
             DOM.contactForm.addEventListener('submit', function(e) {
                 e.preventDefault();
@@ -5017,7 +2638,7 @@
             });
         }
 
-        // 显示通知
+        // 18. 显示通知
         function showNotification(message, type = 'info') {
             const notification = document.createElement('div');
             notification.className = `notification notification-${type}`;
@@ -5054,7 +2675,7 @@
             }, 2000);
         }
 
-        // 初始化页面导航
+        // 19. 初始化页面导航
         function initPageNavigation() {
             DOM.sidebarNavItems.forEach(item => {
                 item.addEventListener('click', function(e) {
@@ -5083,7 +2704,7 @@
             });
         }
 
-        // 点击外部关闭侧边栏
+        // 20. 点击外部关闭侧边栏
         function initClickOutside() {
             document.addEventListener('click', function(e) {
                 if (state.sidebarOpen && 
@@ -5094,7 +2715,7 @@
             });
         }
 
-        // 初始化主题
+        // 21. 初始化主题
         function initTheme() {
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme === 'light') {
@@ -5105,106 +2726,7 @@
             }
         }
 
-        // 右键菜单功能
-        function initContextMenu() {
-            document.addEventListener('contextmenu', function(e) {
-                e.preventDefault();
-                
-                const target = e.target;
-                const isInteractive = target.closest('button, a, input, textarea, .smart-sidebar');
-                
-                if (!isInteractive) {
-                    showContextMenu(e.clientX, e.clientY);
-                }
-            });
-            
-            document.addEventListener('click', function(e) {
-                if (state.contextMenuVisible && !DOM.contextMenu.contains(e.target)) {
-                    hideContextMenu();
-                }
-            });
-            
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && state.contextMenuVisible) {
-                    hideContextMenu();
-                }
-            });
-            
-            DOM.contextMenu.querySelectorAll('.context-menu-item').forEach(item => {
-                item.addEventListener('click', function() {
-                    const action = this.dataset.action;
-                    handleContextMenuAction(action);
-                    hideContextMenu();
-                });
-            });
-        }
-        
-        function showContextMenu(x, y) {
-            const menu = DOM.contextMenu;
-            const viewportWidth = window.innerWidth;
-            const viewportHeight = window.innerHeight;
-            const menuWidth = 200;
-            const menuHeight = 450;
-            
-            let posX = x;
-            let posY = y;
-            
-            if (x + menuWidth > viewportWidth) {
-                posX = viewportWidth - menuWidth - 10;
-            }
-            
-            if (y + menuHeight > viewportHeight) {
-                posY = viewportHeight - menuHeight - 10;
-            }
-            
-            menu.style.left = `${posX}px`;
-            menu.style.top = `${posY}px`;
-            menu.classList.add('active');
-            state.contextMenuVisible = true;
-        }
-        
-        function hideContextMenu() {
-            DOM.contextMenu.classList.remove('active');
-            state.contextMenuVisible = false;
-        }
-        
-        function handleContextMenuAction(action) {
-            switch(action) {
-                case 'reload':
-                    window.location.reload();
-                    break;
-                case 'theme':
-                    toggleTheme();
-                    break;
-                case 'home':
-                    switchPage('home');
-                    break;
-                case 'projects':
-                    switchPage('projects');
-                    break;
-                case 'contact':
-                    switchPage('contact');
-                    break;
-                case 'copy':
-                    navigator.clipboard.writeText(window.location.href)
-                        .then(() => showNotification('链接已复制到剪贴板', 'success'))
-                        .catch(() => showNotification('复制失败，请手动复制', 'error'));
-                    break;
-                case 'print':
-                    window.print();
-                    break;
-                case 'developer':
-                    state.developerMode = true;
-                    DOM.devModeState.textContent = 'active';
-                    DOM.developerPanel.classList.add('active');
-                    DOM.developerToggle.style.display = 'flex';
-                    showNotification('开发者模式已激活!', 'success');
-                    updateDeveloperInfo();
-                    break;
-            }
-        }
-        
-        // 滚动到顶部功能
+        // 22. 滚动到顶部功能
         function initScrollToTop() {
             const handleScroll = throttle(() => {
                 if (window.pageYOffset > 300) {
@@ -5214,7 +2736,7 @@
                 }
             }, 50);
             
-            window.addEventListener('scroll', handleScroll, passiveOptions);
+            window.addEventListener('scroll', handleScroll);
             
             DOM.scrollToTop.addEventListener('click', () => {
                 window.scrollTo({
@@ -5225,83 +2747,90 @@
             
             handleScroll();
         }
-        
-        // 性能优化：资源预加载
-        function preloadCriticalResources() {
-            const links = [
-                { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-                { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: true },
-                { rel: 'preconnect', href: 'https://cdnjs.cloudflare.com' }
-            ];
-            
-            links.forEach(link => {
-                const el = document.createElement('link');
-                Object.assign(el, link);
-                document.head.appendChild(el);
-            });
-        }
-        
-        // 性能优化：内存管理
-        function initMemoryManagement() {
-            window.addEventListener('beforeunload', () => {
-                sessionStorage.removeItem('tempData');
-                
-                if (state.animationFrameId) {
-                    cancelAnimationFrame(state.animationFrameId);
+
+        // 23. 初始化离线支持
+        function initOfflineSupport() {
+            const updateOnlineStatus = () => {
+                const onlineStatus = document.getElementById('onlineStatus');
+                if (navigator.onLine) {
+                    onlineStatus.classList.remove('offline');
+                    onlineStatus.querySelector('span').textContent = '在线';
+                    onlineStatus.querySelector('i').style.color = '#4caf50';
+                } else {
+                    onlineStatus.classList.add('offline');
+                    onlineStatus.querySelector('span').textContent = '离线';
+                    onlineStatus.querySelector('i').style.color = '#ff5252';
                 }
-            });
+            };
             
-            setInterval(() => {
-                const notifications = document.querySelectorAll('.notification');
-                notifications.forEach(notification => {
-                    if (!notification.parentNode || notification.style.transform === 'translateX(120%)') {
-                        notification.parentNode?.removeChild(notification);
-                    }
-                });
-            }, 60000);
+            window.addEventListener('online', updateOnlineStatus);
+            window.addEventListener('offline', updateOnlineStatus);
+            
+            updateOnlineStatus();
         }
 
-        // 页面加载时初始化
+        // 24. 节日特效（简化版本）
+        function initHolidayEffects() {
+            const today = new Date();
+            const month = today.getMonth() + 1;
+            const date = today.getDate();
+            
+            let holidayEffect = null;
+            
+            // 只在12月显示雪花特效
+            if (month === 12 && date >= 15 && date <= 31) {
+                holidayEffect = 'snow';
+            }
+            
+            if (holidayEffect) {
+                createHolidayEffect(holidayEffect);
+                
+                // 每15秒清除一次特效并重新创建
+                state.holidayEffectsInterval = setInterval(() => {
+                    document.getElementById('holidayEffects').innerHTML = '';
+                    createHolidayEffect(holidayEffect);
+                }, 15000);
+            }
+        }
+        
+        function createHolidayEffect(type) {
+            if (type !== 'snow') return;
+            
+            const container = document.getElementById('holidayEffects');
+            const effectCount = 15; // 减少特效数量
+            
+            for (let i = 0; i < effectCount; i++) {
+                setTimeout(() => {
+                    const element = document.createElement('div');
+                    element.className = 'snowflake';
+                    element.innerHTML = '❄';
+                    element.style.left = Math.random() * 100 + '%';
+                    element.style.animationDuration = Math.random() * 3 + 5 + 's';
+                    element.style.animationDelay = Math.random() * 5 + 's';
+                    element.style.fontSize = Math.random() * 8 + 8 + 'px';
+                    element.style.opacity = Math.random() * 0.5 + 0.3;
+                    
+                    container.appendChild(element);
+                }, i * 100);
+            }
+        }
+
+        // 25. 初始化所有功能
         function init() {
-            preloadCriticalResources();
-            
             initTheme();
-            
             initPageProgress();
             initVisitCounter();
             initAnimatedStats();
-            initBookmark();
-            initShareButtons();
-            initMatrixRain();
-            initDragAndDrop();
-            initWatermark();
-            initSpeechReader();
-            initOfflineSupport();
-            initDateTimeDisplay();
             initDeveloperMode();
             initPerformanceOptimization();
-            initAdvancedParticles();
-            initCustomCursor();
-            initReadingProgress();
-            initPageSearch();
-            initGuestbook();
-            initMagnifier();
-            initTranslation();
+            initOfflineSupport();
             initHolidayEffects();
-            initHighlighter();
-            initARQRCode();
             
-            if ('requestIdleCallback' in window) {
-                requestIdleCallback(() => {
-                    initBackgroundAnimation();
-                    initParticles();
-                }, { timeout: 2000 });
-            } else {
-                setTimeout(() => {
-                    initBackgroundAnimation();
-                    initParticles();
-                }, 2000);
-            }
+            // 延迟加载背景效果
+            setTimeout(() => {
+                initBackgroundAnimation();
+                initParticles();
+            }, 500);
             
             initProjects();
             initProjectFilter();
@@ -5312,23 +2841,15 @@
             
             initPageNavigation();
             initClickOutside();
-            initContextMenu();
             initScrollToTop();
-            initMemoryManagement();
             
-            const heroElements = document.querySelectorAll('.hero h1, .hero p, .hero-btns');
-            heroElements.forEach((el, index) => {
-                el.style.animationDelay = `${index * 0.2}s`;
-            });
-            
-            setTimeout(hideLoading, 800);
-            
+            // 添加页面加载完成的动画
             setTimeout(() => {
-                window.projectsData = null;
-            }, 5000);
-            
-            DOM.shortcutHint.addEventListener('mouseenter', () => DOM.shortcutHint.style.opacity = '1');
-            DOM.shortcutHint.addEventListener('mouseleave', () => DOM.shortcutHint.style.opacity = '0.7');
+                const heroElements = document.querySelectorAll('.hero h1, .hero p, .hero-btns');
+                heroElements.forEach((el, index) => {
+                    el.style.animationDelay = `${index * 0.2}s`;
+                });
+            }, 100);
         }
 
         // 页面加载完成
@@ -5346,29 +2867,17 @@
             if (state.sidebarOpen && window.innerWidth < 768) {
                 closeSidebar();
             }
-            
-            if (DOM.matrixCanvas) {
-                DOM.matrixCanvas.width = window.innerWidth;
-                DOM.matrixCanvas.height = window.innerHeight;
-            }
-            
-            initAdvancedParticles();
         }, 250));
         
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden) {
-                document.body.style.animationPlayState = 'paused';
-            } else {
-                document.body.style.animationPlayState = 'running';
+        // 清理函数
+        window.addEventListener('beforeunload', () => {
+            if (state.holidayEffectsInterval) {
+                clearInterval(state.holidayEffectsInterval);
             }
-        });
-        
-        window.addEventListener('error', (e) => {
-            console.error('页面错误:', e.error);
-        });
-        
-        window.addEventListener('unhandledrejection', (e) => {
-            console.error('未处理的Promise拒绝:', e.reason);
+            
+            if (state.animationFrameId) {
+                cancelAnimationFrame(state.animationFrameId);
+            }
         });
     </script>
 </body>
