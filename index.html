@@ -867,7 +867,7 @@
             width: 100%;
             height: 100%;
             z-index: -1;
-            opacity: 0.3;
+            opacity: 0.2;
             pointer-events: none;
         }
         
@@ -876,7 +876,7 @@
             border-radius: 50%;
             background: radial-gradient(circle, var(--primary-color), transparent);
             filter: blur(40px);
-            opacity: 0.2;
+            opacity: 0.15;
             animation: float 20s infinite linear;
             will-change: transform;
         }
@@ -896,7 +896,7 @@
             position: absolute;
             background-color: var(--primary-color);
             border-radius: 50%;
-            opacity: 0.1;
+            opacity: 0.08;
             transform: translateZ(0);
             will-change: transform;
         }
@@ -972,7 +972,7 @@
             height: 100%;
             pointer-events: none;
             z-index: 9998;
-            opacity: 0.02;
+            opacity: 0.015;
             font-size: 120px;
             font-weight: bold;
             color: var(--primary-color);
@@ -1115,6 +1115,63 @@
             color: var(--text-muted);
         }
         
+        /* 自定义右键菜单 */
+        .context-menu {
+            position: fixed;
+            background-color: var(--dark-card);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow), 0 0 30px rgba(108, 99, 255, 0.3);
+            border: 1px solid var(--dark-border);
+            padding: 10px 0;
+            min-width: 200px;
+            z-index: 2000;
+            opacity: 0;
+            transform: scale(0.9);
+            transform-origin: top left;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            pointer-events: none;
+            will-change: transform, opacity;
+        }
+        
+        .context-menu.active {
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: all;
+        }
+        
+        .context-menu-item {
+            padding: 12px 20px;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95rem;
+            border-left: 3px solid transparent;
+            user-select: none;
+        }
+        
+        .context-menu-item:hover {
+            background-color: rgba(108, 99, 255, 0.1);
+            color: var(--primary-color);
+            border-left-color: var(--primary-color);
+            padding-left: 25px;
+        }
+        
+        .context-menu-divider {
+            height: 1px;
+            background-color: var(--dark-border);
+            margin: 8px 0;
+        }
+        
+        .context-menu-item i {
+            width: 20px;
+            text-align: center;
+        }
+        
         /* 新增：团队展示 */
         .team-grid {
             display: grid;
@@ -1237,7 +1294,6 @@
             margin-bottom: 10px;
         }
         
-        /* 新增功能样式 */
         /* 实时在线状态指示器 */
         .online-status {
             position: fixed;
@@ -1442,7 +1498,7 @@
             .smart-sidebar,
             .sidebar-toggle,
             .scroll-to-top,
-            .loading-indicator,
+            .context-menu,
             .bg-animation,
             .particles,
             footer,
@@ -1452,7 +1508,6 @@
             #watermark,
             .floating-shape,
             #developerPanel,
-            .advanced-particles,
             .online-status {
                 display: none !important;
             }
@@ -1514,6 +1569,36 @@
     <div id="onlineStatus" class="online-status">
         <i class="fas fa-circle"></i>
         <span>在线</span>
+    </div>
+    
+    <!-- 自定义右键菜单 -->
+    <div class="context-menu" id="contextMenu">
+        <div class="context-menu-item" data-action="home">
+            <i class="fas fa-home"></i>
+            <span>返回首页</span>
+        </div>
+        <div class="context-menu-item" data-action="projects">
+            <i class="fas fa-project-diagram"></i>
+            <span>查看项目</span>
+        </div>
+        <div class="context-menu-item" data-action="contact">
+            <i class="fas fa-envelope"></i>
+            <span>联系我们</span>
+        </div>
+        <div class="context-menu-divider"></div>
+        <div class="context-menu-item" data-action="theme">
+            <i class="fas fa-moon"></i>
+            <span>切换主题</span>
+        </div>
+        <div class="context-menu-item" data-action="reload">
+            <i class="fas fa-redo"></i>
+            <span>刷新页面</span>
+        </div>
+        <div class="context-menu-divider"></div>
+        <div class="context-menu-item" data-action="copy">
+            <i class="fas fa-copy"></i>
+            <span>复制链接</span>
+        </div>
     </div>
     
     <!-- 智能侧边栏 -->
@@ -1625,7 +1710,7 @@
                 </div>
                 <div class="developer-control">
                     <label>粒子数量</label>
-                    <input type="range" id="particleCount" min="10" max="100" value="30" class="developer-input">
+                    <input type="range" id="particleCount" min="5" max="30" value="15" class="developer-input">
                 </div>
                 <div class="developer-buttons">
                     <button class="developer-btn" id="applyPerformance">应用设置</button>
@@ -1638,7 +1723,7 @@
                     <p>当前页面: <span id="devCurrentPage">home</span></p>
                     <p>主题模式: <span id="devThemeMode">dark</span></p>
                     <p>侧边栏: <span id="devSidebarState">closed</span></p>
-                    <p>开发者模式: <span id="devModeState">active</span></p>
+                    <p>开发者模式: <span id="devModeState">inactive</span></p>
                 </div>
             </div>
         </div>
@@ -1673,7 +1758,7 @@
             </div>
             
             <div class="features-grid">
-                <div class="feature-card will-change-transform card-hover" data-rate="0.1">
+                <div class="feature-card will-change-transform" data-rate="0.1">
                     <div class="feature-icon">
                         <i class="fas fa-dice"></i>
                     </div>
@@ -1684,7 +1769,7 @@
                     </div>
                 </div>
                 
-                <div class="feature-card will-change-transform card-hover" data-rate="0.1">
+                <div class="feature-card will-change-transform" data-rate="0.1">
                     <div class="feature-icon">
                         <i class="fas fa-gamepad"></i>
                     </div>
@@ -1695,7 +1780,7 @@
                     </div>
                 </div>
                 
-                <div class="feature-card will-change-transform card-hover" data-rate="0.1">
+                <div class="feature-card will-change-transform" data-rate="0.1">
                     <div class="feature-icon">
                         <i class="fas fa-desktop"></i>
                     </div>
@@ -1747,19 +1832,19 @@
                     <p>从概念到发布，我们专注于每一个细节，确保我们的作品不仅功能完善，而且具有美学吸引力，为用户带来愉悦的体验。</p>
                     
                     <div class="about-stats">
-                        <div class="stat-item will-change-transform card-hover" data-rate="0.05">
+                        <div class="stat-item will-change-transform" data-rate="0.05">
                             <div class="stat-number">40+</div>
                             <div class="stat-label">完成项目</div>
                         </div>
-                        <div class="stat-item will-change-transform card-hover" data-rate="0.05">
+                        <div class="stat-item will-change-transform" data-rate="0.05">
                             <div class="stat-number">6</div>
                             <div class="stat-label">专业成员</div>
                         </div>
-                        <div class="stat-item will-change-transform card-hover" data-rate="0.05">
+                        <div class="stat-item will-change-transform" data-rate="0.05">
                             <div class="stat-number">4</div>
                             <div class="stat-label">行业奖项</div>
                         </div>
-                        <div class="stat-item will-change-transform card-hover" data-rate="0.05">
+                        <div class="stat-item will-change-transform" data-rate="0.05">
                             <div class="stat-number">50+</div>
                             <div class="stat-label">满意客户</div>
                         </div>
@@ -1807,8 +1892,8 @@
                         <div class="timeline-item">
                             <div class="timeline-dot"></div>
                             <div class="timeline-content">
-                                <div class="timeline-year">2025.9</div>
-                                <p>团队扩展至6人，成立多个分部门</p>
+                                <div class="timeline-year">2026.9</div>
+                                <p>团队扩展至8人，成立多个分部门</p>
                             </div>
                         </div>
                     </div>
@@ -1830,14 +1915,14 @@
                     <div class="member-avatar">高</div>
                     <h3>高诚佑</h3>
                     <div class="member-role">首席游戏设计师</div>
-                    <p>4年游戏设计经验，擅长策略游戏和叙事设计。精通多种编程语言和框架。负责技术架构和性能优化。</p>
+                    <p>6年游戏设计经验，擅长策略游戏和叙事设计。精通多种编程语言和框架。负责技术架构和性能优化。</p>
                 </div>
                 
                 <div class="team-member">
                     <div class="member-avatar">崔</div>
                     <h3>崔俊赫</h3>
                     <div class="member-role">设计总监</div>
-                    <p>桌游设计专家，其作品获得多个奖项</p>
+                    <p>桌游设计专家，其作品获得多个国际奖项</p>
                 </div>
                 
                 <div class="team-member">
@@ -1849,7 +1934,7 @@
             </div>
             
             <div style="margin-top: 50px; text-align: center;">
-                <p>除了核心团队，我们还有3位才华横溢的开发人员、测试工程师和项目管理专家。</p>
+                <p>除了核心团队，我们还有5位才华横溢的开发人员、测试工程师和项目管理专家。</p>
                 <p>我们相信多元化的团队能够创造出最具创新性的作品。</p>
             </div>
         </div>
@@ -1865,7 +1950,7 @@
             
             <div class="contact-container">
                 <div class="contact-info">
-                    <div class="contact-item will-change-transform card-hover" data-rate="0.05">
+                    <div class="contact-item will-change-transform" data-rate="0.05">
                         <div class="contact-icon">
                             <i class="fas fa-map-marker-alt"></i>
                         </div>
@@ -1878,7 +1963,7 @@
                         </div>
                     </div>
                     
-                    <div class="contact-item will-change-transform card-hover" data-rate="0.05">
+                    <div class="contact-item will-change-transform" data-rate="0.05">
                         <div class="contact-icon">
                             <i class="fas fa-phone"></i>
                         </div>
@@ -1891,7 +1976,7 @@
                         </div>
                     </div>
                     
-                    <div class="contact-item will-change-transform card-hover" data-rate="0.05">
+                    <div class="contact-item will-change-transform" data-rate="0.05">
                         <div class="contact-icon">
                             <i class="fas fa-envelope"></i>
                         </div>
@@ -1955,7 +2040,7 @@
                     </div>
                     <p>我们是一个多领域的创意工作室，专注于桌游、电脑游戏和操作系统开发，致力于通过创新技术创造卓越的数字体验。</p>
                     <div style="margin-top: 15px; font-size: 0.9rem; color: var(--text-muted);">
-                        <i class="fas fa-certificate"></i> ISO 9001:2015 认证
+                        <i class="fas fa-certificate"></i> ISO 9001:2025 认证
                     </div>
                 </div>
                 
@@ -1989,8 +2074,8 @@
             </div>
             
             <div class="copyright">
-                <p>&copy; 2018-2023 XCS Studio. 保留所有权利. | <a href="#" style="color: var(--text-muted);">隐私政策</a> | <a href="#" style="color: var(--text-muted);">服务条款</a></p>
-                <p style="margin-top: 10px; font-size: 0.8rem;">本网站使用了最新的Web技术，建议使用Chrome 90+或Firefox 88+以获得最佳体验</p>
+                <p>&copy; 2022-2026 XCS Studio. 保留所有权利. | <a href="#" style="color: var(--text-muted);">隐私政策</a> | <a href="#" style="color: var(--text-muted);">服务条款</a></p>
+                <p style="margin-top: 10px; font-size: 0.8rem;">本网站使用了最新的Web技术，建议使用Chrome 100+或Firefox 100+以获得最佳体验</p>
             </div>
         </div>
     </footer>
@@ -2023,96 +2108,96 @@
             };
         }
 
-        // 项目数据
+        // 项目数据 - 更新年份到2026
         const projectsData = [
             {
                 id: 1,
-                title: "MintOS 4",
-                description: "基于ScOS内核的现代化操作系统，拥有流畅的动画和超多使用功能",
-                category: "boardgame",
-                icon: "fas fa-chess",
-                year: "2020",
-                status: "已发布"
+                title: "MintOS 5",
+                description: "基于ScOS内核的现代化操作系统，拥有流畅的动画和超多使用功能，2026年全新升级版本",
+                category: "os",
+                icon: "fas fa-desktop",
+                year: "2026",
+                status: "开发中"
             },
             {
                 id: 2,
-                title: "UNO Plus",
-                description: "经典桌游UNO的超级升级版，增加多种新颖卡牌",
-                category: "game",
-                icon: "fas fa-rocket",
-                year: "2021",
+                title: "UNO Pro",
+                description: "经典桌游UNO的专业升级版，增加AR互动和在线对战功能",
+                category: "boardgame",
+                icon: "fas fa-dice",
+                year: "2026",
                 status: "已发布"
             },
             {
                 id: 3,
-                title: "NovaOS",
+                title: "NovaOS Pro",
                 description: "基于Linux的现代操作系统，专注于用户体验和性能优化，提供直观的界面和强大的工具集。",
                 category: "os",
                 icon: "fas fa-desktop",
-                year: "2022",
+                year: "2025",
                 status: "已发布"
             },
             {
                 id: 4,
-                title: "迷宫之谜",
-                description: "合作解谜桌游，玩家需要共同解决谜题才能逃离不断变化的魔法迷宫。",
+                title: "迷宫之谜 Pro",
+                description: "合作解谜桌游，玩家需要共同解决谜题才能逃离不断变化的魔法迷宫。增强现实版本。",
                 category: "boardgame",
                 icon: "fas fa-puzzle-piece",
-                year: "2019",
+                year: "2025",
                 status: "已发布"
             },
             {
                 id: 5,
-                title: "幻影都市",
+                title: "幻影都市 Pro",
                 description: "赛博朋克风格的动作角色扮演游戏，玩家在庞大的未来都市中完成任务和探索故事。",
                 category: "game",
                 icon: "fas fa-city",
-                year: "2022",
+                year: "2026",
                 status: "开发中"
             },
             {
                 id: 6,
-                title: "HarmonyOS Pro",
+                title: "HarmonyOS Pro Max",
                 description: "专为创意工作者设计的操作系统，提供无缝的多任务处理和专业级创意工具集成。",
                 category: "os",
                 icon: "fas fa-palette",
-                year: "2023",
+                year: "2026",
                 status: "测试中"
             },
             {
                 id: 7,
-                title: "荒野求生",
-                description: "生存主题的桌游，玩家需要在荒野中收集资源、建造庇护所并应对各种挑战。",
-                category: "boardgame",
-                icon: "fas fa-campground",
-                year: "2021",
-                status: "已发布"
+                title: "荒野求生 VR",
+                description: "生存主题的VR游戏，玩家需要在荒野中收集资源、建造庇护所并应对各种挑战。",
+                category: "game",
+                icon: "fas fa-vr-cardboard",
+                year: "2026",
+                status: "概念阶段"
             },
             {
                 id: 8,
-                title: "元素之战",
+                title: "元素之战 2",
                 description: "多人在线战术游戏，玩家控制具有不同元素力量的角色，在竞技场中进行团队对战。",
                 category: "game",
                 icon: "fas fa-fire",
-                year: "2023",
+                year: "2025",
                 status: "已发布"
             },
             {
                 id: 9,
-                title: "智慧城市",
+                title: "智慧城市 Pro",
                 description: "一款模拟经营类移动应用，玩家可以规划和管理自己的未来城市。",
                 category: "mobile",
                 icon: "fas fa-mobile-alt",
-                year: "2023",
+                year: "2026",
                 status: "开发中"
             },
             {
                 id: 10,
-                title: "量子OS",
+                title: "量子OS Pro",
                 description: "下一代操作系统原型，采用量子计算原理优化系统资源分配。",
                 category: "os",
                 icon: "fas fa-atom",
-                year: "2023",
+                year: "2026",
                 status: "概念阶段"
             }
         ];
@@ -2137,6 +2222,7 @@
             footerLinks: document.querySelectorAll('.footer-links a'),
             scrollToTop: document.getElementById('scrollToTop'),
             visitCounter: document.getElementById('visitCounter'),
+            contextMenu: document.getElementById('contextMenu'),
             developerPanel: document.getElementById('developerPanel'),
             developerClose: document.getElementById('developerClose'),
             devCodeInput: document.getElementById('devCodeInput'),
@@ -2168,9 +2254,10 @@
             animationFrameId: null,
             developerMode: false,
             holidayEffectsInterval: null,
+            contextMenuVisible: false,
             performanceSettings: {
                 targetFPS: 60,
-                particleCount: 20,
+                particleCount: 12,
                 frameInterval: 1000 / 60
             }
         };
@@ -2186,8 +2273,8 @@
 
         // 2. 初始化背景动画（简化版本）
         function initBackgroundAnimation() {
-            // 只创建3个浮动形状
-            for (let i = 0; i < 3; i++) {
+            // 只创建2个浮动形状，减少性能消耗
+            for (let i = 0; i < 2; i++) {
                 const shape = document.createElement('div');
                 shape.classList.add('floating-shape');
                 shape.style.width = `${Math.random() * 80 + 40}px`;
@@ -2202,14 +2289,14 @@
 
         // 3. 初始化粒子效果（性能优化版本）
         function initParticles() {
-            const particleCount = Math.min(15, Math.floor(window.innerWidth * window.innerHeight / 80000));
+            const particleCount = state.performanceSettings.particleCount;
             
             const fragment = document.createDocumentFragment();
             
             for (let i = 0; i < particleCount; i++) {
                 const particle = document.createElement('div');
                 particle.classList.add('particle');
-                particle.style.width = `${Math.random() * 1 + 0.5}px`;
+                particle.style.width = `${Math.random() * 0.8 + 0.4}px`;
                 particle.style.height = particle.style.width;
                 particle.style.left = `${Math.random() * 100}%`;
                 particle.style.top = `${Math.random() * 100}%`;
@@ -2234,7 +2321,7 @@
                 e.preventDefault();
                 
                 const devCodeValue = DOM.devCode ? DOM.devCode.value : '';
-                if (devCodeValue === 'xcsdev2023' && !state.developerMode) {
+                if (devCodeValue === 'xcsdev2026' && !state.developerMode) {
                     state.developerMode = true;
                     DOM.devModeState.textContent = 'active';
                     DOM.developerPanel.classList.add('active');
@@ -2360,7 +2447,93 @@
             updateVisitCounter();
         }
 
-        // 5. 性能优化动画
+        // 5. 自定义右键菜单
+        function initContextMenu() {
+            // 阻止默认右键菜单
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                showContextMenu(e.clientX, e.clientY);
+            });
+            
+            // 点击其他地方关闭右键菜单
+            document.addEventListener('click', function(e) {
+                if (state.contextMenuVisible && !DOM.contextMenu.contains(e.target)) {
+                    hideContextMenu();
+                }
+            });
+            
+            // 按ESC键关闭右键菜单
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && state.contextMenuVisible) {
+                    hideContextMenu();
+                }
+            });
+            
+            // 右键菜单项点击事件
+            DOM.contextMenu.querySelectorAll('.context-menu-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const action = this.dataset.action;
+                    handleContextMenuAction(action);
+                    hideContextMenu();
+                });
+            });
+        }
+        
+        function showContextMenu(x, y) {
+            const menu = DOM.contextMenu;
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            const menuWidth = 200;
+            const menuHeight = 300;
+            
+            let posX = x;
+            let posY = y;
+            
+            if (x + menuWidth > viewportWidth) {
+                posX = viewportWidth - menuWidth - 10;
+            }
+            
+            if (y + menuHeight > viewportHeight) {
+                posY = viewportHeight - menuHeight - 10;
+            }
+            
+            menu.style.left = `${posX}px`;
+            menu.style.top = `${posY}px`;
+            menu.classList.add('active');
+            state.contextMenuVisible = true;
+        }
+        
+        function hideContextMenu() {
+            DOM.contextMenu.classList.remove('active');
+            state.contextMenuVisible = false;
+        }
+        
+        function handleContextMenuAction(action) {
+            switch(action) {
+                case 'home':
+                    switchPage('home');
+                    break;
+                case 'projects':
+                    switchPage('projects');
+                    break;
+                case 'contact':
+                    switchPage('contact');
+                    break;
+                case 'theme':
+                    toggleTheme();
+                    break;
+                case 'reload':
+                    window.location.reload();
+                    break;
+                case 'copy':
+                    navigator.clipboard.writeText(window.location.href)
+                        .then(() => showNotification('链接已复制到剪贴板', 'success'))
+                        .catch(() => showNotification('复制失败，请手动复制', 'error'));
+                    break;
+            }
+        }
+
+        // 6. 性能优化动画
         function initPerformanceOptimization() {
             // 使用Intersection Observer来懒加载动画
             const observer = new IntersectionObserver((entries) => {
@@ -2370,7 +2543,8 @@
                     }
                 });
             }, {
-                threshold: 0.1
+                threshold: 0.1,
+                rootMargin: '50px'
             });
             
             // 观察所有需要动画的元素
@@ -2379,7 +2553,7 @@
             });
         }
 
-        // 6. 页面访问计数器
+        // 7. 页面访问计数器
         function initVisitCounter() {
             let visitCount = localStorage.getItem('xcsVisitCount') || 0;
             visitCount = parseInt(visitCount) + 1;
@@ -2404,7 +2578,7 @@
             }
         }
 
-        // 7. 主题切换
+        // 8. 主题切换
         function toggleTheme() {
             state.isLightTheme = !state.isLightTheme;
             
@@ -2423,7 +2597,7 @@
             updateDeveloperInfo();
         }
 
-        // 8. 数字滚动统计
+        // 9. 数字滚动统计
         function initAnimatedStats() {
             const statNumbers = document.querySelectorAll('.stat-number');
             
@@ -2434,13 +2608,13 @@
                             const target = parseInt(stat.textContent);
                             const suffix = stat.textContent.replace(/\d+/g, '');
                             let current = 0;
-                            const increment = target / 20;
+                            const increment = target / 15;
                             
                             const updateCount = () => {
                                 if (current < target) {
                                     current += increment;
                                     stat.textContent = Math.floor(current) + suffix;
-                                    setTimeout(updateCount, 16);
+                                    setTimeout(updateCount, 20);
                                 } else {
                                     stat.textContent = target + suffix;
                                 }
@@ -2456,7 +2630,7 @@
             });
         }
 
-        // 9. 页面切换（带过渡动画）
+        // 10. 页面切换（带过渡动画）
         function switchPage(pageId) {
             if (state.currentPage === pageId) return;
             
@@ -2492,11 +2666,14 @@
                     if (window.innerWidth < 768) {
                         closeSidebar();
                     }
+                    
+                    // 关闭右键菜单
+                    hideContextMenu();
                 }, 400);
             }
         }
 
-        // 10. 更新侧边栏导航
+        // 11. 更新侧边栏导航
         function updateSidebarNav(pageId) {
             DOM.sidebarNavItems.forEach(item => {
                 item.classList.remove('active');
@@ -2506,7 +2683,7 @@
             });
         }
 
-        // 11. 初始化项目展示
+        // 12. 初始化项目展示
         function initProjects() {
             if (DOM.projectsGrid.children.length > 0) return;
             
@@ -2547,12 +2724,12 @@
                 cards.forEach((card, index) => {
                     setTimeout(() => {
                         card.classList.add('visible');
-                    }, index * 30);
+                    }, index * 50);
                 });
             }, 50);
         }
 
-        // 12. 获取分类标签
+        // 13. 获取分类标签
         function getCategoryLabel(category) {
             const labels = {
                 'boardgame': '桌游',
@@ -2563,7 +2740,7 @@
             return labels[category] || '其他';
         }
 
-        // 13. 项目过滤功能
+        // 14. 项目过滤功能
         function initProjectFilter() {
             DOM.filterButtons.forEach(button => {
                 button.addEventListener('click', function() {
@@ -2586,7 +2763,7 @@
             });
         }
 
-        // 14. 切换侧边栏
+        // 15. 切换侧边栏
         function toggleSidebar() {
             if (state.sidebarOpen) {
                 closeSidebar();
@@ -2595,7 +2772,7 @@
             }
         }
 
-        // 15. 打开侧边栏
+        // 16. 打开侧边栏
         function openSidebar() {
             DOM.sidebarPanel.classList.add('active');
             DOM.sidebarToggle.style.transform = 'translateY(-50%) rotate(90deg)';
@@ -2609,7 +2786,7 @@
             updateDeveloperInfo();
         }
 
-        // 16. 关闭侧边栏
+        // 17. 关闭侧边栏
         function closeSidebar() {
             DOM.sidebarPanel.classList.remove('active');
             DOM.sidebarToggle.style.transform = 'translateY(-50%)';
@@ -2623,7 +2800,7 @@
             updateDeveloperInfo();
         }
 
-        // 17. 表单提交处理
+        // 18. 表单提交处理
         function initContactForm() {
             DOM.contactForm.addEventListener('submit', function(e) {
                 e.preventDefault();
@@ -2638,7 +2815,7 @@
             });
         }
 
-        // 18. 显示通知
+        // 19. 显示通知
         function showNotification(message, type = 'info') {
             const notification = document.createElement('div');
             notification.className = `notification notification-${type}`;
@@ -2675,7 +2852,7 @@
             }, 2000);
         }
 
-        // 19. 初始化页面导航
+        // 20. 初始化页面导航
         function initPageNavigation() {
             DOM.sidebarNavItems.forEach(item => {
                 item.addEventListener('click', function(e) {
@@ -2704,7 +2881,7 @@
             });
         }
 
-        // 20. 点击外部关闭侧边栏
+        // 21. 点击外部关闭侧边栏
         function initClickOutside() {
             document.addEventListener('click', function(e) {
                 if (state.sidebarOpen && 
@@ -2715,7 +2892,7 @@
             });
         }
 
-        // 21. 初始化主题
+        // 22. 初始化主题
         function initTheme() {
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme === 'light') {
@@ -2726,7 +2903,7 @@
             }
         }
 
-        // 22. 滚动到顶部功能
+        // 23. 滚动到顶部功能
         function initScrollToTop() {
             const handleScroll = throttle(() => {
                 if (window.pageYOffset > 300) {
@@ -2748,7 +2925,7 @@
             handleScroll();
         }
 
-        // 23. 初始化离线支持
+        // 24. 初始化离线支持
         function initOfflineSupport() {
             const updateOnlineStatus = () => {
                 const onlineStatus = document.getElementById('onlineStatus');
@@ -2769,7 +2946,7 @@
             updateOnlineStatus();
         }
 
-        // 24. 节日特效（简化版本）
+        // 25. 节日特效（简化版本）
         function initHolidayEffects() {
             const today = new Date();
             const month = today.getMonth() + 1;
@@ -2785,11 +2962,11 @@
             if (holidayEffect) {
                 createHolidayEffect(holidayEffect);
                 
-                // 每15秒清除一次特效并重新创建
+                // 每20秒清除一次特效并重新创建
                 state.holidayEffectsInterval = setInterval(() => {
                     document.getElementById('holidayEffects').innerHTML = '';
                     createHolidayEffect(holidayEffect);
-                }, 15000);
+                }, 20000);
             }
         }
         
@@ -2797,7 +2974,7 @@
             if (type !== 'snow') return;
             
             const container = document.getElementById('holidayEffects');
-            const effectCount = 15; // 减少特效数量
+            const effectCount = 10; // 减少特效数量
             
             for (let i = 0; i < effectCount; i++) {
                 setTimeout(() => {
@@ -2811,17 +2988,18 @@
                     element.style.opacity = Math.random() * 0.5 + 0.3;
                     
                     container.appendChild(element);
-                }, i * 100);
+                }, i * 150);
             }
         }
 
-        // 25. 初始化所有功能
+        // 26. 初始化所有功能
         function init() {
             initTheme();
             initPageProgress();
             initVisitCounter();
             initAnimatedStats();
             initDeveloperMode();
+            initContextMenu();
             initPerformanceOptimization();
             initOfflineSupport();
             initHolidayEffects();
@@ -2850,6 +3028,9 @@
                     el.style.animationDelay = `${index * 0.2}s`;
                 });
             }, 100);
+            
+            // 初始更新开发者信息
+            updateDeveloperInfo();
         }
 
         // 页面加载完成
@@ -2867,6 +3048,9 @@
             if (state.sidebarOpen && window.innerWidth < 768) {
                 closeSidebar();
             }
+            
+            // 关闭右键菜单
+            hideContextMenu();
         }, 250));
         
         // 清理函数
