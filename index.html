@@ -4,20 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>XCS Studio - 创造超越边界的体验</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600&display=swap">
+    <!-- 预加载关键字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600&display=swap" media="print" onload="this.media='all'">
     <style>
-        /* 性能优化：关键CSS内联，非关键CSS异步加载 */
+        /* 性能优化：CSS变量预计算 */
         :root {
             /* 浅色主题变量 */
             --primary: #c2410c;
             --primary-dark: #9a3412;
             --primary-light: #ea580c;
+            --primary-rgb: 194, 65, 12;
+            
             --secondary: #059669;
             --secondary-dark: #047857;
             --secondary-light: #10b981;
+            --secondary-rgb: 5, 150, 105;
+            
             --accent: #7c3aed;
             --accent-dark: #6d28d9;
             --accent-light: #8b5cf6;
+            --accent-rgb: 124, 58, 237;
             
             --bg-primary: #fefefe;
             --bg-secondary: #f8fafc;
@@ -28,6 +37,7 @@
             --text-tertiary: #78716c;
             
             --surface: #ffffff;
+            --surface-rgb: 255, 255, 255;
             --surface-hover: #f8fafc;
             --surface-border: #e2e8f0;
             
@@ -59,6 +69,7 @@
                 --text-tertiary: #9ca3af;
                 
                 --surface: #111827;
+                --surface-rgb: 17, 24, 39;
                 --surface-hover: #1f2937;
                 --surface-border: #374151;
                 
@@ -84,6 +95,7 @@
             --text-tertiary: #9ca3af;
             
             --surface: #111827;
+            --surface-rgb: 17, 24, 39;
             --surface-hover: #1f2937;
             --surface-border: #374151;
             
@@ -130,9 +142,12 @@
             scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
         }
         
+        /* 性能优化：减少复合图层 */
         html {
             scroll-behavior: smooth;
             overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
         
         body {
@@ -151,7 +166,17 @@
             transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
                         color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             /* 性能优化：减少重绘 */
-            will-change: background-color, color;
+            contain: content;
+        }
+        
+        /* 页面加载动画 */
+        @keyframes pageLoad {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        
+        body.loaded {
+            animation: pageLoad 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
         
         /* 确保对比度符合WCAG AA标准 */
@@ -181,7 +206,6 @@
                         border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             /* 性能优化：GPU加速 */
             transform: translateZ(0);
-            will-change: transform, background-color, border-color;
         }
         
         [data-theme="dark"] header {
@@ -262,6 +286,25 @@
         .theme-toggle-btn:hover {
             transform: scale(1.05);
             box-shadow: var(--shadow-md);
+        }
+        
+        /* 添加点击涟漪效果 */
+        .theme-toggle-btn:after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(var(--primary-rgb), 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+        
+        .theme-toggle-btn:focus:not(:active)::after {
+            animation: ripple 1s ease-out;
         }
         
         .theme-toggle-btn:before {
@@ -517,6 +560,25 @@
             left: 0;
         }
         
+        /* 点击涟漪效果 */
+        .work-item:after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(var(--primary-rgb), 0.3);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+        
+        .work-item:active::after {
+            animation: ripple 1s ease-out;
+        }
+        
         .work-item-1 {
             grid-column: 1 / 7;
             grid-row: 1;
@@ -609,6 +671,19 @@
             transform: translateY(-2px);
         }
         
+        /* 滚动触发动画类 */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), 
+                        transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .animate-on-scroll.animated {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
         /* 重新设计的项目展示区域 - 移除图片，使用悬停浮窗 */
         .projects-section {
             margin-bottom: 100px;
@@ -633,7 +708,14 @@
             display: flex;
             flex-direction: column;
             cursor: pointer;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
+        
+        .project-card:nth-child(1) { animation-delay: 0.3s; }
+        .project-card:nth-child(2) { animation-delay: 0.5s; }
+        .project-card:nth-child(3) { animation-delay: 0.7s; }
         
         .project-card:hover {
             transform: translateY(-10px);
@@ -661,6 +743,11 @@
             font-weight: 600;
             color: var(--primary);
             font-family: 'Space Grotesk', sans-serif;
+            transition: transform 0.3s ease;
+        }
+        
+        .project-card:hover .project-icon-content {
+            transform: scale(1.1);
         }
         
         .project-content {
@@ -776,6 +863,17 @@
             border: 1px solid var(--surface-border);
             transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1),
                         border-color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        
+        .consulting-section.animated {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), 
+                        transform 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+                        background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                        border-color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .consulting-section h2 {
@@ -802,11 +900,24 @@
             padding: 20px;
             background-color: var(--surface-hover);
             border-radius: var(--border-radius);
-            transition: background-color 0.3s ease;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
         }
+        
+        .consulting-feature.animated {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .consulting-feature:nth-child(1) { transition-delay: 0.1s; }
+        .consulting-feature:nth-child(2) { transition-delay: 0.2s; }
+        .consulting-feature:nth-child(3) { transition-delay: 0.3s; }
+        .consulting-feature:nth-child(4) { transition-delay: 0.4s; }
         
         .consulting-feature:hover {
             background-color: rgba(194, 65, 12, calc(0.1 + 0.05 * var(--dark-mode, 0)));
+            transform: translateY(-5px);
         }
         
         .consulting-feature h4 {
@@ -837,6 +948,39 @@
             background-color: var(--primary);
             width: 0%;
             transition: width 0.3s ease;
+        }
+        
+        /* 返回顶部按钮 */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: var(--shadow-md);
+            opacity: 0;
+            transform: translateY(100px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 99;
+        }
+        
+        .back-to-top.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .back-to-top:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-5px);
         }
         
         /* 页脚 */
@@ -953,6 +1097,17 @@
             }
         }
         
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(20, 20);
+                opacity: 0;
+            }
+        }
+        
         /* 性能优化 - 使用will-change提示浏览器 */
         .will-change-transform {
             will-change: transform;
@@ -1051,6 +1206,14 @@
             .intro-text h1 {
                 font-size: 2.5rem;
             }
+            
+            .back-to-top {
+                bottom: 20px;
+                right: 20px;
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
         }
         
         @media (max-width: 576px) {
@@ -1078,6 +1241,10 @@
             .project-card {
                 height: 250px;
             }
+            
+            .consulting-features {
+                grid-template-columns: 1fr;
+            }
         }
         
         /* 性能优化：减少动画在低性能设备上的负担 */
@@ -1090,6 +1257,12 @@
                 transition-duration: 0.01ms !important;
                 scroll-behavior: auto !important;
             }
+            
+            .animate-on-scroll {
+                opacity: 1;
+                transform: none;
+                transition: none;
+            }
         }
     </style>
 </head>
@@ -1098,6 +1271,11 @@
     <div class="progress-container">
         <div class="progress-bar" id="progressBar"></div>
     </div>
+    
+    <!-- 返回顶部按钮 -->
+    <button class="back-to-top" id="backToTop" aria-label="返回顶部">
+        ↑
+    </button>
     
     <header id="mainHeader">
         <div class="container">
@@ -1141,13 +1319,13 @@
             </div>
 
             <section id="work" class="work-section">
-                <div class="section-header">
+                <div class="section-header animate-on-scroll">
                     <h2 class="section-title">我们的工作领域</h2>
                     <p class="section-subtitle">从数字世界到实体桌面，我们创造多元化的互动体验</p>
                 </div>
                 
                 <div class="work-grid">
-                    <div class="work-item work-item-1" data-modal="game">
+                    <div class="work-item work-item-1 animate-on-scroll" data-modal="game">
                         <div class="work-icon game">G</div>
                         <h3>电脑游戏开发</h3>
                         <p>我们创造沉浸式的数字世界，注重游戏机制与叙事的完美结合。从独立游戏到大型项目，每一款游戏都是对互动可能性的探索。</p>
@@ -1159,7 +1337,7 @@
                         </div>
                     </div>
                     
-                    <div class="work-item work-item-2" data-modal="tabletop">
+                    <div class="work-item work-item-2 animate-on-scroll" data-modal="tabletop">
                         <div class="work-icon tabletop">T</div>
                         <h3>桌游设计</h3>
                         <p>将数字世界的互动逻辑带入实体桌面。我们设计具有深度策略和社交互动的桌游，创造面对面的游戏体验。</p>
@@ -1171,7 +1349,7 @@
                         </div>
                     </div>
                     
-                    <div class="work-item work-item-3" data-modal="os">
+                    <div class="work-item work-item-3 animate-on-scroll" data-modal="os">
                         <div class="work-icon os">OS</div>
                         <h3>操作系统开发</h3>
                         <p>构建以人为本的计算基础。我们开发注重用户体验和效率的操作系统，重新思考人与机器的交互方式。</p>
@@ -1186,14 +1364,14 @@
             </section>
 
             <section id="projects" class="projects-section">
-                <div class="section-header">
+                <div class="section-header animate-on-scroll">
                     <h2 class="section-title">近期项目</h2>
                     <p class="section-subtitle">探索我们正在创造的产品和体验</p>
                 </div>
                 
                 <div class="projects-grid">
                     <!-- 项目1 - 异零YiLing -->
-                    <div class="project-card" data-project="yiling">
+                    <div class="project-card animate-on-scroll" data-project="yiling">
                         <div class="project-icon">
                             <div class="project-icon-content">这就是</div>
                         </div>
@@ -1230,7 +1408,7 @@
                     </div>
                     
                     <!-- 项目2 - 云顶之篇2 -->
-                    <div class="project-card" data-project="cloudtop">
+                    <div class="project-card animate-on-scroll" data-project="cloudtop">
                         <div class="project-icon">
                             <div class="project-icon-content">XCS</div>
                         </div>
@@ -1268,7 +1446,7 @@
                     </div>
                     
                     <!-- 项目3 - MintOS 6 -->
-                    <div class="project-card" data-project="mintos">
+                    <div class="project-card animate-on-scroll" data-project="mintos">
                         <div class="project-icon">
                             <div class="project-icon-content">Studio</div>
                         </div>
@@ -1307,24 +1485,24 @@
                 </div>
                 
                 <!-- 咨询板块放在项目展示下方 -->
-                <div class="consulting-section">
+                <div class="consulting-section animate-on-scroll" id="consulting">
                     <h2>互动体验咨询服务</h2>
                     <p>除了自主产品开发，我们还为其他公司提供互动体验设计咨询服务，帮助客户创建引人入胜的数字和实体产品。</p>
                     
                     <div class="consulting-features">
-                        <div class="consulting-feature">
+                        <div class="consulting-feature animate-on-scroll">
                             <h4>用户体验设计与评估</h4>
                             <p>全面的用户体验分析，确保产品符合用户需求和期望。</p>
                         </div>
-                        <div class="consulting-feature">
+                        <div class="consulting-feature animate-on-scroll">
                             <h4>游戏机制与平衡分析</h4>
                             <p>专业的游戏机制设计，确保游戏平衡性和长期可玩性。</p>
                         </div>
-                        <div class="consulting-feature">
+                        <div class="consulting-feature animate-on-scroll">
                             <h4>产品原型设计与测试</h4>
                             <p>快速原型制作和用户测试，验证产品概念和交互设计。</p>
                         </div>
-                        <div class="consulting-feature">
+                        <div class="consulting-feature animate-on-scroll">
                             <h4>市场定位与用户研究</h4>
                             <p>深入的用户研究和市场分析，帮助产品找到最佳定位。</p>
                         </div>
@@ -1395,13 +1573,61 @@
                 progressBar: document.getElementById('progressBar'),
                 mainHeader: document.getElementById('mainHeader'),
                 themeToggle: document.getElementById('themeToggle'),
-                themeLabel: document.getElementById('themeLabel')
+                themeLabel: document.getElementById('themeLabel'),
+                backToTop: document.getElementById('backToTop')
             };
             
             // 性能优化：使用requestAnimationFrame进行动画
             let lastScrollTop = 0;
             let headerVisible = true;
             let ticking = false;
+            
+            // 滚动触发动画管理器
+            class ScrollAnimator {
+                constructor() {
+                    this.animatedElements = document.querySelectorAll('.animate-on-scroll');
+                    this.observerOptions = {
+                        root: null,
+                        rootMargin: '0px 0px -100px 0px',
+                        threshold: 0.1
+                    };
+                    this.init();
+                }
+                
+                init() {
+                    if ('IntersectionObserver' in window) {
+                        this.observer = new IntersectionObserver((entries) => {
+                            entries.forEach(entry => {
+                                if (entry.isIntersecting) {
+                                    entry.target.classList.add('animated');
+                                    this.observer.unobserve(entry.target);
+                                    
+                                    // 如果是咨询特性，分别激活每个特性
+                                    if (entry.target.classList.contains('consulting-section')) {
+                                        setTimeout(() => {
+                                            const features = entry.target.querySelectorAll('.consulting-feature');
+                                            features.forEach((feature, index) => {
+                                                setTimeout(() => {
+                                                    feature.classList.add('animated');
+                                                }, index * 100);
+                                            });
+                                        }, 300);
+                                    }
+                                }
+                            });
+                        }, this.observerOptions);
+                        
+                        this.animatedElements.forEach(el => {
+                            this.observer.observe(el);
+                        });
+                    } else {
+                        // 回退方案：直接显示所有元素
+                        this.animatedElements.forEach(el => {
+                            el.classList.add('animated');
+                        });
+                    }
+                }
+            }
             
             // 主题切换功能 - 修正标签逻辑
             function getCurrentTheme() {
@@ -1418,7 +1644,7 @@
                     document.documentElement.setAttribute('data-theme', theme);
                     localStorage.setItem('theme', theme);
                     
-                    // 修正标签逻辑：深色模式时显示"浅色模式"，浅色模式时显示"深色模式"
+                    // 修正标签逻辑：深色模式时显示"深色模式"，浅色模式时显示"浅色模式"
                     elements.themeLabel.textContent = theme === 'dark' ? '深色模式' : '浅色模式';
                     
                     // 更新CSS变量
@@ -1485,6 +1711,21 @@
                 }
                 
                 lastScrollTop = st <= 0 ? 0 : st;
+                
+                // 控制返回顶部按钮的显示
+                if (st > 300) {
+                    elements.backToTop.classList.add('visible');
+                } else {
+                    elements.backToTop.classList.remove('visible');
+                }
+            }
+            
+            // 返回顶部功能
+            function scrollToTop() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
             }
             
             // 滚动处理
@@ -1527,7 +1768,7 @@
             
             // 性能优化：延迟加载非关键资源
             function loadNonCriticalResources() {
-                // 延迟加载字体
+                // 延迟加载字体（已经在head中预加载）
                 const fontLink = document.createElement('link');
                 fontLink.rel = 'stylesheet';
                 fontLink.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600&display=swap';
@@ -1600,6 +1841,49 @@
                 });
             }
             
+            // 添加点击涟漪效果
+            function initRippleEffects() {
+                document.querySelectorAll('.work-item, .theme-toggle-btn').forEach(button => {
+                    button.addEventListener('click', function(e) {
+                        // 获取点击位置
+                        const rect = this.getBoundingClientRect();
+                        const x = e.clientX - rect.left;
+                        const y = e.clientY - rect.top;
+                        
+                        // 创建涟漪元素
+                        const ripple = document.createElement('span');
+                        ripple.style.position = 'absolute';
+                        ripple.style.left = x + 'px';
+                        ripple.style.top = y + 'px';
+                        ripple.style.width = '5px';
+                        ripple.style.height = '5px';
+                        ripple.style.backgroundColor = 'rgba(var(--primary-rgb), 0.3)';
+                        ripple.style.borderRadius = '50%';
+                        ripple.style.transform = 'translate(-50%, -50%)';
+                        ripple.style.animation = 'ripple 1s ease-out';
+                        
+                        this.appendChild(ripple);
+                        
+                        // 动画结束后移除元素
+                        setTimeout(() => {
+                            ripple.remove();
+                        }, 1000);
+                    });
+                });
+            }
+            
+            // 页面加载动画
+            function initPageLoadAnimation() {
+                // 添加加载类
+                document.body.classList.add('loaded');
+                
+                // 设置初始动画延迟
+                const animatedElements = document.querySelectorAll('.animate-on-scroll, .work-item, .project-card');
+                animatedElements.forEach((el, index) => {
+                    el.style.animationDelay = `${0.1 + index * 0.1}s`;
+                });
+            }
+            
             // 初始化
             function init() {
                 // 初始化主题
@@ -1608,13 +1892,16 @@
                 // 添加主题切换事件
                 elements.themeToggle.addEventListener('click', toggleTheme);
                 
+                // 添加返回顶部事件
+                elements.backToTop.addEventListener('click', scrollToTop);
+                
                 // 为导航链接添加平滑滚动
-                document.querySelectorAll('nav a').forEach(link => {
+                document.querySelectorAll('nav a, .back-to-top').forEach(link => {
                     link.addEventListener('click', function(e) {
                         const href = this.getAttribute('href');
                         
                         // 如果是锚点链接
-                        if (href.startsWith('#')) {
+                        if (href && href.startsWith('#')) {
                             e.preventDefault();
                             const targetId = href.substring(1);
                             const targetElement = document.getElementById(targetId);
@@ -1635,12 +1922,21 @@
                 // 监听滚动事件（使用节流）
                 window.addEventListener('scroll', throttle(handleScroll));
                 
+                // 初始化滚动触发动画
+                new ScrollAnimator();
+                
                 // 初始化图片懒加载
                 initLazyLoading();
                 
                 // 初始化悬停浮窗
                 initHoverModals();
                 optimizeHoverModalPosition();
+                
+                // 初始化涟漪效果
+                initRippleEffects();
+                
+                // 初始化页面加载动画
+                initPageLoadAnimation();
                 
                 // 延迟加载非关键资源
                 if ('requestIdleCallback' in window) {
@@ -1661,11 +1957,23 @@
                 }
                 
                 // 页面加载完成后
-                window.addEventListener('load', preloadImages);
+                window.addEventListener('load', () => {
+                    preloadImages();
+                    // 页面加载完成后，将所有动画元素设置为可见
+                    document.querySelectorAll('.animate-on-scroll').forEach(el => {
+                        if (!el.classList.contains('animated')) {
+                            el.classList.add('animated');
+                        }
+                    });
+                });
             }
             
             // DOM加载完成后初始化
-            document.addEventListener('DOMContentLoaded', init);
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
         })();
     </script>
 </body>
