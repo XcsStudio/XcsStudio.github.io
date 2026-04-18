@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+    <title>XCSStudio · 登录 / 注册</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .login-section { flex: 1; display: flex; align-items: center; justify-content: center; padding: var(--space-8) var(--space-4); }
+        .login-card { background: var(--bg-card); border-radius: var(--radius-lg); padding: var(--space-8); box-shadow: var(--shadow-md); width: 100%; max-width: 440px; }
+        .login-header { text-align: center; margin-bottom: var(--space-6); }
+        .login-header h2 { font-size: var(--text-xl); margin-bottom: var(--space-2); border-left: none; padding-left: 0; }
+        .form-tabs { display: flex; gap: var(--space-2); margin-bottom: var(--space-6); border-bottom: 1px solid var(--border-light); }
+        .tab-btn { flex: 1; background: none; border: none; padding: var(--space-2); font-size: var(--text-base); font-weight: 500; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; }
+        .tab-btn.active { color: var(--color-primary); border-bottom-color: var(--color-primary); }
+        .back-link { text-align: center; margin-top: var(--space-4); }
+        .back-link a { color: var(--text-muted); font-size: var(--text-sm); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+        .back-link a:hover { color: var(--color-primary); }
+        @media (max-width: 480px) { .login-card { padding: var(--space-6); } }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo" id="logoHome">XCS<span>Studio</span></div>
+            <ul class="nav-links">
+                <li><a href="index.html">首页</a></li>
+                <li><button class="theme-toggle" id="themeToggle">
+                    <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                    <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="display:none;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                </button></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="login-section">
+        <div class="container" style="max-width:480px;">
+            <div class="login-card">
+                <div class="login-header"><h2>欢迎回来</h2><p>登录或注册以探索更多</p></div>
+                <div class="form-tabs"><button class="tab-btn active" id="loginTabBtn">登录</button><button class="tab-btn" id="registerTabBtn">注册</button></div>
+                <form id="loginForm">
+                    <div class="form-group"><label>昵称</label><input type="text" id="loginNickname" autocomplete="username"></div>
+                    <div class="form-group"><label>密码</label><input type="password" id="loginPassword" autocomplete="current-password"></div>
+                    <button type="submit" class="submit-btn" id="loginSubmit">登录</button>
+                    <div id="loginMessage" class="message"></div>
+                </form>
+                <form id="registerForm" style="display: none;">
+                    <div class="form-group"><label>昵称</label><input type="text" id="regNickname" autocomplete="off"></div>
+                    <div class="form-group"><label>密码 (至少8位，含字母和数字)</label><input type="password" id="regPassword" autocomplete="new-password"></div>
+                    <button type="submit" class="submit-btn" id="regSubmit">注册新账号</button>
+                    <div id="registerMessage" class="message"></div>
+                </form>
+                <div class="back-link"><a href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 12h18M3 12l4-4M3 12l4 4"/></svg>返回首页</a></div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer"><div class="container"><p>© 2025 XCSStudio — 想象力架构实验室</p></div></footer>
+
+    <script src="common.js"></script>
+    <script>
+        (function() {
+            if (window.themeUtils) themeUtils.initThemeToggle('themeToggle');
+            const logo = document.getElementById('logoHome');
+            if (logo) logo.onclick = () => window.location.href = 'index.html';
+            
+            const loginTab = document.getElementById('loginTabBtn');
+            const regTab = document.getElementById('registerTabBtn');
+            const loginForm = document.getElementById('loginForm');
+            const regForm = document.getElementById('registerForm');
+            const loginSubmit = document.getElementById('loginSubmit');
+            const regSubmit = document.getElementById('regSubmit');
+            const loginMsg = document.getElementById('loginMessage');
+            const regMsg = document.getElementById('registerMessage');
+            
+            let submitting = false;
+            
+            loginTab.onclick = () => {
+                loginTab.classList.add('active'); regTab.classList.remove('active');
+                loginForm.style.display = 'block'; regForm.style.display = 'none';
+                loginMsg.style.display = 'none'; regMsg.style.display = 'none';
+            };
+            regTab.onclick = () => {
+                regTab.classList.add('active'); loginTab.classList.remove('active');
+                loginForm.style.display = 'none'; regForm.style.display = 'block';
+                loginMsg.style.display = 'none'; regMsg.style.display = 'none';
+            };
+            
+            loginForm.onsubmit = async (e) => {
+                e.preventDefault();
+                if (submitting) return;
+                submitting = true;
+                loginSubmit.disabled = true;
+                const nickname = document.getElementById('loginNickname').value.trim();
+                const password = document.getElementById('loginPassword').value;
+                const res = await window.xcsAuth.login(nickname, password);
+                window.xcsAuth.showMessage(loginMsg, res.message, res.success ? 'success' : 'error');
+                if (res.success) {
+                    setTimeout(() => window.location.href = 'index.html', 1000);
+                }
+                submitting = false;
+                loginSubmit.disabled = false;
+            };
+            
+            regForm.onsubmit = async (e) => {
+                e.preventDefault();
+                if (submitting) return;
+                submitting = true;
+                regSubmit.disabled = true;
+                const nickname = document.getElementById('regNickname').value.trim();
+                const password = document.getElementById('regPassword').value;
+                const res = await window.xcsAuth.register(nickname, password);
+                window.xcsAuth.showMessage(regMsg, res.message, res.success ? 'success' : 'error');
+                if (res.success) {
+                    document.getElementById('regNickname').value = '';
+                    document.getElementById('regPassword').value = '';
+                    setTimeout(() => loginTab.click(), 1500);
+                }
+                submitting = false;
+                regSubmit.disabled = false;
+            };
+        })();
+    </script>
+</body>
+</html>
