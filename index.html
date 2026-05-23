@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+    <meta name="description" content="XCSStudio - 游戏开发、操作系统构建与桌游设计的多元化创意工坊">
+    <title>XCSStudio | 游戏·操作系统·桌游 创新工坊</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container nav-container">
+            <div class="logo">XCS<span>Studio</span></div>
+            <ul class="nav-links">
+                <li><a href="#home">主页</a></li>
+                <li><a href="#games">游戏</a></li>
+                <li><a href="#os">操作系统</a></li>
+                <li><a href="#boardgames">桌游</a></li>
+                <li>
+                    <button class="login-btn" id="loginBtn" aria-label="账户">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                            <polyline points="10 17 15 12 10 7"/>
+                            <line x1="15" y1="12" x2="3" y2="12"/>
+                        </svg>
+                        <span class="login-text">登录</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="theme-toggle" id="themeToggle" aria-label="主题切换">
+                        <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                        <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        <section id="home" class="hero container">
+            <h1 class="hero-title">多维创造 · <span class="highlight">不止于想象</span></h1>
+            <div class="hero-description">
+                开发沉浸式游戏 | 自研操作系统 | 设计深度桌游 — 全方位创意工坊
+            </div>
+        </section>
+
+        <div class="container">
+            <div class="studio-card">
+                <p><strong>XCSStudio</strong> 是一个集合游戏开发、操作系统构建与桌游设计的多元化工作室。我们致力于创造富有灵魂的互动体验：从大型多人3D魔法世界，到像素风流水线厨房；从流畅优雅的MintOS全自研架构，到足以媲美电子游戏的实体卡牌对战。不拘一格，但精益求精。</p>
+                <p style="margin-bottom:0; color: var(--text-secondary);">游戏 · 系统 · 桌游 — 三个维度，同一份热爱。</p>
+            </div>
+
+            <!-- 游戏项目 -->
+            <section id="games" class="section">
+                <h2>
+                    <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <path d="M6 11h4M8 9v4M15 12h.01M18 10h.01M17.32 5H6.68a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h10.64a2 2 0 0 0 1.96-1.61l1.28-7a2 2 0 0 0-1.96-2.39z"/>
+                        <path d="M8 17v3M16 17v3"/>
+                    </svg>
+                    游戏项目
+                </h2>
+                <div class="cards-grid">
+                    <div class="project-card">
+                        <div class="card-badge">已发布 | 大型多人3D</div>
+                        <div class="project-title">《异零》</div>
+                        <div class="project-desc">大型多人魔法技能杀怪3D游戏，宏大开放世界，数百种魔法组合，与好友共同狩猎传奇巨兽，体验真正的魔法激斗。</div>
+                        <div class="project-meta">
+                            <span class="meta-item"><svg class="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>动态施法</span>
+                            <span class="meta-item"><svg class="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 12v4a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4v-4M12 2v12M8 8l4 4 4-4"/></svg>团队副本</span>
+                            <span class="meta-item">持续赛季</span>
+                        </div>
+                    </div>
+                    <div class="project-card">
+                        <div class="card-badge">休闲模拟 | 治愈系</div>
+                        <div class="project-title">《极光路大排档》</div>
+                        <div class="project-desc">扮演大排档主厨，烹饪各式小吃，体验深夜食堂般的温暖故事，轻松又治愈的厨艺冒险。</div>
+                        <div class="project-meta">
+                            <span class="meta-item"><svg class="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 5v14M10 5v14M14 5v14M18 5v14M3 3h18M3 21h18"/></svg>数十种食谱</span>
+                            <span class="meta-item"><svg class="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>客人互动</span>
+                        </div>
+                    </div>
+                    <div class="project-card">
+                        <div class="card-badge dev">开发中 | 2D像素自动化</div>
+                        <div class="project-title">《黄铜大厨》</div>
+                        <div class="project-desc">购买食材，架设自动化流水线机器，生产出餐点……甚至包括离奇的「铁丝炒面」等黑暗料理。完成海量订单与任务，打造你的黄铜美食帝国。</div>
+                        <div class="project-meta">
+                            <span class="meta-item"><svg class="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M8 12h8"/></svg>自动化产线</span>
+                            <span class="meta-item"><svg class="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 12v4a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4v-4M12 2v12M8 8l4 4 4-4"/></svg>黑暗配方</span>
+                            <span class="meta-item">任务驱动</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 操作系统 MintOS -->
+            <section id="os" class="section">
+                <h2>
+                    <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                        <line x1="9" y1="4" x2="9" y2="20"></line>
+                        <line x1="15" y1="4" x2="15" y2="20"></line>
+                        <line x1="4" y1="9" x2="20" y2="9"></line>
+                        <line x1="4" y1="15" x2="20" y2="15"></line>
+                    </svg>
+                    操作系统 · MintOS
+                </h2>
+                <div class="cards-grid">
+                    <div class="project-card">
+                        <div class="card-badge">全自研架构 | 最新 MintOS 6</div>
+                        <div class="project-title">MintOS 6</div>
+                        <div class="project-desc">以流畅非线性动画和现代优雅UI著称，全自研内核及交互架构。从底层动画引擎到窗口管理，每个细节都追求行云流水般的体验。MintOS6 带来全新设计语言与更高能效。</div>
+                        <div class="project-meta">
+                            <span class="meta-item"><svg class="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M2 12L7 2L12 12L17 2L22 12"/><path d="M2 17h20"/></svg>非线性转场</span>
+                            <span class="meta-item"><svg class="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H5.78a1.65 1.65 0 0 0-1.51 1 1.65 1.65 0 0 0 .33 1.82L12 22z"/></svg>极简美学</span>
+                            <span class="meta-item">自研微内核</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="os-note">
+                    💡 MintOS 系列传承：MintOS 1 → MintOS 6，每一次迭代都专注于丝般顺滑的动画与稳定可靠的系统架构，完全自主研发。
+                </div>
+            </section>
+
+            <!-- 桌游设计 -->
+            <section id="boardgames" class="section">
+                <h2>
+                    <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <circle cx="9" cy="9" r="2"></circle>
+                        <circle cx="15" cy="15" r="2"></circle>
+                        <path d="M9 15L15 9"></path>
+                    </svg>
+                    桌游设计
+                </h2>
+                <div class="cards-grid">
+                    <div class="project-card">
+                        <div class="card-badge">聚会神器 | 400张卡牌</div>
+                        <div class="project-title">UNO PPPPPPLUS！</div>
+                        <div class="project-desc">经典玩法全面升级，多达400张特殊功能卡，疯狂叠加反转、禁言、强力抽牌等效果，派对氛围拉满，体验前所未有的UNO狂潮。</div>
+                        <div class="project-meta">
+                            <span class="meta-item"><svg class="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M2 12h4l2-4 4 8 4-8 2 4h4"/></svg>400+卡池</span>
+                            <span class="meta-item">疯狂变体规则</span>
+                            <span class="meta-item">6-12人</span>
+                        </div>
+                    </div>
+                    <div class="project-card">
+                        <div class="card-badge">策略对战 | 深度构筑</div>
+                        <div class="project-title">《云顶之篇》系列</div>
+                        <div class="project-desc">毫不逊色于电子游戏的卡牌对战桌游，融合自走棋机制与牌组构筑，职业、武器、魔法、效果四重维度。现已推出基础篇与24种扩展篇，千变万化的战术博弈。</div>
+                        <div class="project-meta">
+                            <span class="meta-item"><svg class="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 7h-4.18A3 3 0 0 0 14 5.18V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M8 9h2M8 13h6"/></svg>全卡牌200+</span>
+                            <span class="meta-item">多人人对战&轮抽</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <div style="margin: var(--space-8) 0 var(--space-4); text-align: center;">
+                <p style="font-size: var(--text-sm); color: var(--text-muted); border-top: 1px solid var(--border-light); padding-top: var(--space-6);">
+                    ✦ 跨领域创造者 ✦ 游戏 · 系统 · 桌游  —  XCSStudio 用代码与设计雕刻互动未来
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-links">
+                <a href="https://xcsstudio.github.io/ACRS" target="_blank" rel="noopener noreferrer">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 2a15 15 0 0 0 0 20 15 15 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+                    ACRS 1.4.0 在线体验
+                </a>
+                <a href="https://xcsstudio.github.io/MintOS6" target="_blank" rel="noopener noreferrer">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><line x1="9" y1="4" x2="9" y2="20"/><line x1="15" y1="4" x2="15" y2="20"/><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/></svg>
+                    MintOS 6 在线体验
+                </a>
+                <a href="XCSL_editor.html" target="_blank" rel="noopener noreferrer">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 7h16M4 12h16M4 17h10"/><rect x="2" y="3" width="20" height="18" rx="2"/></svg>
+                    XCSL 编辑器
+                </a>
+            </div>
+            <div class="copyright">© 2026 XCSStudio | 联系：studio@xcsstudio.com</div>
+        </div>
+    </footer>
+
+    <script src="common.js"></script>
+    <script>
+        (function() {
+            if (!window.xcsAuth) {
+                console.error('认证模块加载失败，请刷新页面重试');
+                return;
+            }
+            if (window.themeUtils) themeUtils.initThemeToggle('themeToggle');
+            
+            const loginBtn = document.getElementById('loginBtn');
+            const loginTextSpan = loginBtn?.querySelector('.login-text');
+            
+            async function updateNavButton() {
+                if (!loginBtn || !loginTextSpan) return;
+                const isValid = await window.xcsAuth.verifySession();
+                if (isValid) {
+                    const session = window.xcsAuth.getSession();
+                    if (session && session.nickname) {
+                        loginTextSpan.textContent = session.nickname;
+                        loginBtn.onclick = (e) => { e.preventDefault(); window.location.href = 'admin.html'; };
+                        return;
+                    }
+                }
+                loginTextSpan.textContent = '登录';
+                loginBtn.onclick = (e) => { e.preventDefault(); window.location.href = 'login.html'; };
+            }
+            
+            updateNavButton();
+            window.addEventListener('storage', (e) => {
+                if (e.key === 'xcs_session') updateNavButton();
+            });
+            
+            document.querySelectorAll('.nav-links a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    const targetId = this.getAttribute('href');
+                    if (targetId && targetId !== '#') {
+                        const target = document.querySelector(targetId);
+                        if (target) {
+                            e.preventDefault();
+                            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                    }
+                });
+            });
+        })();
+    </script>
+</body>
+</html>
