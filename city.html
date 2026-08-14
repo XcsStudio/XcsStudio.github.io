@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>架空世界地图编辑器</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="editor-page" data-theme="editor-dark">
+<div id="app">
+  <aside id="sidebar">
+    <div class="brand">架空世界 · 地图编辑器</div>
+
+    <div class="group">
+      <div class="group-title">操作</div>
+      <button class="btn active" data-tool="select"><span class="swatch" style="background:#9fb4d6"></span>选择 / 平移</button>
+      <button class="btn" data-tool="pan"><span class="swatch" style="background:#7d8794"></span>手型拖动</button>
+    </div>
+
+    <div class="group">
+      <div class="group-title">道路</div>
+      <button class="btn" data-tool="road" data-type="highway"><span class="swatch line" style="background:#F1B675"></span>高速公路</button>
+      <button class="btn" data-tool="road" data-type="highway_under"><span class="swatch line" style="background:linear-gradient(90deg,#F1B675 50%,transparent 50%)"></span>高速(在建)</button>
+      <button class="btn" data-tool="road" data-type="primary"><span class="swatch line" style="background:#FAECBA"></span>一级道路</button>
+      <button class="btn" data-tool="road" data-type="secondary"><span class="swatch line" style="background:#FFFFFF"></span>二级道路</button>
+      <button class="btn" data-tool="road" data-type="tertiary"><span class="swatch line" style="background:#EBEBED"></span>三级道路</button>
+      <button class="btn" data-tool="road" data-type="elevated"><span class="swatch line" style="background:#F6D76A"></span>高架道路</button>
+      <button class="btn" data-tool="road" data-type="ramp"><span class="swatch line" style="background:#F6D76A"></span>匝道</button>
+    </div>
+
+    <div class="group">
+      <div class="group-title">铁路</div>
+      <button class="btn" data-tool="railway" data-type="normal"><span class="swatch line" style="background:linear-gradient(90deg,#BEC4CD 50%,#fff 50%)"></span>普速铁路</button>
+      <button class="btn" data-tool="railway" data-type="hsr"><span class="swatch line" style="background:linear-gradient(90deg,#E2BAC1 50%,#fff 50%)"></span>高铁 / 城际</button>
+      <button class="btn" data-tool="railway" data-type="metro"><span class="swatch line" style="background:linear-gradient(90deg,#c724b1 50%,#fff 50%)"></span>地铁 / 轻轨</button>
+      <button class="btn" data-tool="railway" data-type="maglev"><span class="swatch line" style="background:linear-gradient(90deg,#2980b9 50%,#fff 50%)"></span>磁悬浮</button>
+    </div>
+
+    <div class="group">
+      <div class="group-title">地形</div>
+      <button class="btn" data-tool="terrain" data-type="mountain"><span class="swatch" style="background:#B4EBAF"></span>山区</button>
+      <button class="btn" data-tool="terrain" data-type="water"><span class="swatch" style="background:#B2CEFE"></span>水域</button>
+    </div>
+
+    <div class="settings">
+      <div class="settings-title">设置</div>
+      <div class="version">版本 <b>0.5.0a</b></div>
+      <div class="theme-picker" id="theme-picker">
+        <div class="theme-option active" data-theme="editor-dark">深色</div>
+        <div class="theme-option" data-theme="light">浅色</div>
+        <div class="theme-option" data-theme="studio-dark">雅深</div>
+      </div>
+    </div>
+
+  </aside>
+
+  <div id="stage">
+    <canvas id="canvas"></canvas>
+    <div id="tip"></div>
+    <div id="toolbar">
+      <button id="btn-undo" title="撤销">↶ 撤销</button>
+      <div class="tb-sep"></div>
+      <div id="file-menu-wrap">
+        <button id="btn-file" title="文件操作">📁 文件</button>
+        <div id="file-dropdown" class="file-dropdown">
+          <button id="btn-save" title="保存到本地">💾 保存</button>
+          <button id="btn-import" title="导入 .xcs 工程文件">📂 导入</button>
+          <button id="btn-export-img" title="导出 PNG 图片">🖼 导出图片</button>
+          <button id="btn-export-xcs" title="导出 .xcs 工程文件">📦 导出工程</button>
+          <div class="tb-sep"></div>
+          <button id="btn-clear" class="danger" title="清空画布">🗑 清空</button>
+        </div>
+      </div>
+    </div>
+    <input type="file" id="file-import" accept=".xcs" style="display:none">
+    <div id="statusbar">
+      <span id="st-tool">工具：选择</span>
+      <span id="st-zoom">缩放：100%</span>
+      <span id="st-coord">坐标：0, 0</span>
+      <span class="hint" style="margin-left:auto">滚轮缩放 · 中键/空格拖动 · 双击或回车结束 · Esc取消</span>
+    </div>
+    <div id="preview-panel">
+      <div class="pp-header">
+        <span id="pp-name">道路名称</span>
+        <span id="pp-type" class="pp-type"></span>
+        <button id="pp-close" title="关闭">×</button>
+      </div>
+      <canvas id="pp-canvas" width="220" height="120"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- 路徽信息输入弹窗 -->
+<div class="modal-bg" id="modal-bg">
+  <div class="modal">
+    <h3 id="modal-title">道路信息</h3>
+    <div id="modal-number-group">
+      <label>编号（如 G45、G107）</label>
+      <input id="in-number" type="text" placeholder="留空则不显示编号">
+    </div>
+    <div id="modal-shield-group" style="display:none">
+      <label>编号图标格式</label>
+      <div class="shield-picker" id="shield-picker">
+        <div class="shield-option active" data-shield="">
+          <div class="preview"><div class="shield-prev-none"></div></div>
+          <div class="name">无</div>
+        </div>
+        <div class="shield-option" data-shield="national">
+          <div class="preview"><div class="shield-prev-national">G</div></div>
+          <div class="name">国道</div>
+        </div>
+        <div class="shield-option" data-shield="provincial">
+          <div class="preview"><div class="shield-prev-provincial">S</div></div>
+          <div class="name">省道</div>
+        </div>
+      </div>
+    </div>
+    <div id="modal-color-group" style="display:none">
+      <label>线路颜色</label>
+      <input id="in-color" type="color" value="#c724b1">
+    </div>
+    <label>名称（可选）</label>
+    <input id="in-name" type="text" placeholder="如 京港澳高速">
+    <div class="modal-actions">
+      <button id="modal-ok" class="primary">确定</button>
+    </div>
+  </div>
+</div>
+
+<!-- 确认弹窗 -->
+<div class="modal-bg" id="confirm-bg">
+  <div class="modal" style="width:280px">
+    <h3 id="confirm-title">确认</h3>
+    <p id="confirm-msg" style="font-size:13px;color:#cfd6df;line-height:1.6;margin-bottom:8px"></p>
+    <div class="modal-actions">
+      <button id="confirm-cancel">取消</button>
+      <button id="confirm-ok" class="danger">确定</button>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+/* ============== 类型定义 ============== */
+const ROAD_TYPES = {
+  highway:        { label: "高速公路",      color: "#F1B675", width: 9,  outline: "#EFA561", shield: "expressway" },
+  highway_under:  { label: "高速(在建)",    color: "#F1B675", width: 9,  outline: "#EFA561", dashed: true, shield: "expressway" },
+  primary:        { label: "一级道路",      color: "#FAECBA", width: 7,  outline: "#F6D291" },
+  secondary:      { label: "二级道路",      color: "#FFFFFF", width: 5,  outline: "#CECFD6" },
+  tertiary:       { label: "三级道路",      color: "#EBEBED", width: 3,  outline: "#BABBC0" },
+  elevated:       { label: "高架道路",      color: "#F6D76A", width: 6,  outline: "#E9C257" },
+  ramp:           { label: "匝道",          color: "#F6D76A", width: 3,  outline: "#E9C257" }
+};
+
+const RAILWAY_TYPES = {
+  normal: { label: "普速铁路",    colorA: "#BEC4CD", colorB: "#FFFFFF", outline: "#DCDFE3", width: 4 },
+  hsr:    { label: "高铁/城际",   colorA: "#E2BAC1", colorB: "#FFFFFF", outline: "#EEDADD", width: 4 },
+  metro:  { label: "地铁/轻轨",   colorA: null,      colorB: "#FFFFFF", width: 3.5 },
+  maglev: { label: "磁悬浮",      colorA: "#2980b9", colorB: "#ffffff", width: 4 }
+};
+
+const TERRAIN_TYPES = {
+  mountain: { label: "山区", fill: "#B4EBAF" },
+  water:    { label: "水域", fill: "#B2CEFE" }
+};
+
+/* ============== 状态 ============== */
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+const stage = document.getElementById("stage");
+
+let dpr = window.devicePixelRatio || 1;
+let viewW = 0, viewH = 0;
+
+const state = {
+  tool: "select",       // select | pan | road | railway | terrain
+  type: null,
+  elements: [],         // 所有已绘制元素
+  drafting: null,       // 当前正在绘制的点序列 {kind,type,points}
+  hoverWorld: null,
+  panX: 0, panY: 0, zoom: 1,
+  panning: false, spaceDown: false, panStart: null,
+  selectedId: null,
+  history: [],          // 撤销栈，存 elements 的深拷贝
+  junctions: [],        // 自动路口节点 [{x,y}]
+  gaps: {}              // 立交桥洞：{ roadId: [{wx, wy, upperType}] }
+};
+
+let nextId = 1;
+const newId = () => "e" + (nextId++);
+
+/* ============== 主题（仅影响 UI 外观，不改变绘制颜色）============== */
+const themeColors = { grid: "rgba(255,255,255,0.04)", gridAxis: "rgba(255,255,255,0.12)" };
+function refreshThemeColors() {
+  const cs = getComputedStyle(document.body);
+  themeColors.grid = (cs.getPropertyValue("--ed-grid").trim()) || "rgba(255,255,255,0.04)";
+  themeColors.gridAxis = (cs.getPropertyValue("--ed-grid-axis").trim()) || "rgba(255,255,255,0.12)";
+}
+function applyTheme(theme) {
+  document.body.dataset.theme = theme;
+  try { localStorage.setItem("架空地图主题", theme); } catch (e) {}
+  const picker = document.getElementById("theme-picker");
+  if (picker) picker.querySelectorAll(".theme-option").forEach(o => o.classList.toggle("active", o.dataset.theme === theme));
+  refreshThemeColors();
+  requestRender();
+}
+
+/* ============== 视口与坐标 ============== */
+function resize() {
+  dpr = window.devicePixelRatio || 1;
+  viewW = stage.clientWidth;
+  viewH = stage.clientHeight;
+  canvas.width = Math.floor(viewW * dpr);
+  canvas.height = Math.floor(viewH * dpr);
+  canvas.style.width = viewW + "px";
+  canvas.style.height = viewH + "px";
+  requestRender();
+}
+window.addEventListener("resize", resize);
+
+function worldToScreen(x, y) {
+  return { x: (x - state.panX) * state.zoom + viewW / 2, y: (y - state.panY) * state.zoom + viewH / 2 };
+}
+function screenToWorld(x, y) {
+  return { x: (x - viewW / 2) / state.zoom + state.panX, y: (y - viewH / 2) / state.zoom + state.panY };
+}
+
+/* ============== 渲染调度 ============== */
+let renderQueued = false;
+function requestRender() { if (!renderQueued) { renderQueued = true; requestAnimationFrame(render); } }
+
+function render() {
+  renderQueued = false;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, viewW, viewH);
+
+  drawGrid();
+
+  // 先地形，再道路（按层级从低到高，便于立交桥洞效果），再铁路，再路徽/标签
+  for (const el of state.elements) if (el.kind === "terrain") drawTerrain(el);
+  const roads = state.elements.filter(e => e.kind === "road").sort((a, b) => roadTier(a.type) - roadTier(b.type));
+  for (const el of roads) drawRoad(el);
+  // 自动路口节点
+  for (const j of state.junctions) {
+    const s = worldToScreen(j.x, j.y);
+    drawJunctionNode(s.x, s.y);
+  }
+  for (const el of state.elements) if (el.kind === "railway") drawRailway(el);
+  for (const el of state.elements) if (el.kind === "road") drawRoadShieldAndLabel(el);
+  // 路名沿道路方向书写（平移时跳过以保持流畅，松手后补画）
+  if (!state.panning) {
+    for (const el of state.elements) if (el.kind === "road") drawRoadName(el);
+  }
+
+  // 选中高亮
+  if (state.selectedId) {
+    const el = state.elements.find(e => e.id === state.selectedId);
+    if (el) drawSelection(el);
+  }
+
+  // 草稿预览
+  if (state.drafting && state.drafting.points.length > 0) drawDraft();
+}
+
+function drawGrid() {
+  const step = 100;
+  const sp = worldToScreen(0, 0);
+  const startX = sp.x, startY = sp.y;
+  const screenStep = step * state.zoom;
+  if (screenStep < 14) return; // 太密就不画
+  ctx.lineWidth = 1;
+  ctx.strokeStyle = themeColors.grid;
+  ctx.beginPath();
+  let x = startX % screenStep;
+  while (x < viewW) { ctx.moveTo(x, 0); ctx.lineTo(x, viewH); x += screenStep; }
+  let y = startY % screenStep;
+  while (y < viewH) { ctx.moveTo(0, y); ctx.lineTo(viewW, y); y += screenStep; }
+  ctx.stroke();
+  // 原点十字
+  const o = worldToScreen(0, 0);
+  if (o.x > -50 && o.x < viewW + 50 && o.y > -50 && o.y < viewH + 50) {
+    ctx.strokeStyle = themeColors.gridAxis;
+    ctx.beginPath();
+    ctx.moveTo(o.x - 10, o.y); ctx.lineTo(o.x + 10, o.y);
+    ctx.moveTo(o.x, o.y - 10); ctx.lineTo(o.x, o.y + 10);
+    ctx.stroke();
+  }
+}
+
+function ptsToScreen(points) {
+  const out = new Array(points.length);
+  for (let i = 0; i < points.length; i++) {
+    const s = worldToScreen(points[i].x, points[i].y);
+    out[i] = s;
+  }
+  return out;
+}
+
+/* ---- 平滑曲线（Catmull-Rom 样条展平）---- */
+// 将控制点序列转为经过各点的平滑折线，模拟现实公路的圆顺拐弯
+function flattenCurve(points, segPerSpan) {
+  const n = points.length;
+  if (n < 3) return points.slice();
+  const out = [];
+  // 首尾虚拟点：沿首尾切线方向延伸，保证端点处曲率自然
+  const first = { x: 2 * points[0].x - points[1].x, y: 2 * points[0].y - points[1].y };
+  const last  = { x: 2 * points[n - 1].x - points[n - 2].x, y: 2 * points[n - 1].y - points[n - 2].y };
+  const pp = [first].concat(points, [last]);
+  for (let i = 1; i < pp.length - 2; i++) {
+    const a = pp[i - 1], b = pp[i], c = pp[i + 1], d = pp[i + 2];
+    if (i === 1) out.push({ x: b.x, y: b.y });
+    for (let s = 1; s <= segPerSpan; s++) {
+      const t = s / segPerSpan, t2 = t * t, t3 = t2 * t;
+      const x = 0.5 * ((2 * b.x) + (-a.x + c.x) * t + (2 * a.x - 5 * b.x + 4 * c.x - d.x) * t2 + (-a.x + 3 * b.x - 3 * c.x + d.x) * t3);
+      const y = 0.5 * ((2 * b.y) + (-a.y + c.y) * t + (2 * a.y - 5 * b.y + 4 * c.y - d.y) * t2 + (-a.y + 3 * b.y - 3 * c.y + d.y) * t3);
+      out.push({ x, y });
+    }
+  }
+  return out;
+}
+function flatPts(pts, seg) { return pts.length >= 3 ? flattenCurve(pts, seg) : pts.slice(); }
+
+// 在折线上找到距 (px,py) 最近点的弧长位置（用于立交桥洞在曲线上的定位）
+function projectArcLength(pts, segLen, px, py) {
+  let bestLen = 0, bestDist = Infinity, acc = 0;
+  for (let i = 0; i < segLen.length; i++) {
+    const a = pts[i], b = pts[i + 1];
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const len2 = dx * dx + dy * dy;
+    let t = len2 === 0 ? 0 : ((px - a.x) * dx + (py - a.y) * dy) / len2;
+    t = Math.max(0, Math.min(1, t));
+    const cx = a.x + dx * t, cy = a.y + dy * t;
+    const d = Math.hypot(px - cx, py - cy);
+    if (d < bestDist) { bestDist = d; bestLen = acc + segLen[i] * t; }
+    acc += segLen[i];
+  }
+  return bestLen;
+}
+
+// 取折线在指定弧长 s 处的位置与切线角度（弧度），segLen 必须与 pts 逐段对应
+function sampleAtArc(pts, segLen, s) {
+  if (pts.length < 2) return { x: pts[0].x, y: pts[0].y, angle: 0 };
+  const total = segLen.reduce((a, b) => a + b, 0);
+  s = Math.max(0, Math.min(s, total));
+  let acc = 0;
+  for (let i = 0; i < segLen.length; i++) {
+    if (acc + segLen[i] >= s) {
+      const t = segLen[i] === 0 ? 0 : (s - acc) / segLen[i];
+      const a = pts[i], b = pts[i + 1];
+      return {
+        x: a.x + (b.x - a.x) * t,
+        y: a.y + (b.y - a.y) * t,
+        angle: Math.atan2(b.y - a.y, b.x - a.x)
+      };
+    }
+    acc += segLen[i];
+  }
+  // 端点
+  const a = pts[pts.length - 2], b = pts[pts.length - 1];
+  return { x: b.x, y: b.y, angle: Math.atan2(b.y - a.y, b.x - a.x) };
+}
+
+/* ---- 地形 ---- */
+function drawTerrain(el) {
+  const pts = ptsToScreen(el.points);
+  if (pts.length < 2) return;
+  const flat = flatPts(pts, 16);
+  ctx.beginPath();
+  ctx.moveTo(flat[0].x, flat[0].y);
+  for (let i = 1; i < flat.length; i++) ctx.lineTo(flat[i].x, flat[i].y);
+  ctx.closePath();
+  ctx.fillStyle = TERRAIN_TYPES[el.type].fill;
+  ctx.fill();
+  if (el.name) {
+    const c = centroid(el.points);
+    const s = worldToScreen(c.x, c.y);
+    drawLabel(s.x, s.y, el.name, "#eaf5ea");
+  }
+}
+function centroid(pts) {
+  let x = 0, y = 0;
+  for (const p of pts) { x += p.x; y += p.y; }
+  return { x: x / pts.length, y: y / pts.length };
+}
+
+/* ---- 道路 ---- */
+function strokePath(pts) {
+  if (pts.length < 2) return;
+  ctx.beginPath();
+  ctx.moveTo(pts[0].x, pts[0].y);
+  for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
+  ctx.stroke();
+}
+
+// 道路绘制层级（数值越大越靠上，用于立交桥洞遮挡）
+function roadTier(type) {
+  switch (type) {
+    case "tertiary": return 0;
+    case "secondary": return 1;
+    case "primary": return 2;
+    case "ramp": return 5;
+    case "elevated": return 6;
+    case "highway":
+    case "highway_under": return 7;
+    default: return 0;
+  }
+}
+function roadW(type) { return Math.max(2, ROAD_TYPES[type].width * Math.sqrt(state.zoom)); }
+
+// 带桥洞裁剪的描边：intervals 为屏幕弧长上的 [start,end] 区间，区间内不绘制
+function strokeWithGaps(pts, segLen, intervals, setup) {
+  setup();
+  if (intervals.length === 0) { strokePath(pts); return; }
+  // 合并区间
+  intervals = intervals.slice().sort((a, b) => a[0] - b[0]);
+  const merged = [];
+  for (const iv of intervals) {
+    if (merged.length && iv[0] <= merged[merged.length - 1][1])
+      merged[merged.length - 1][1] = Math.max(merged[merged.length - 1][1], iv[1]);
+    else merged.push([iv[0], iv[1]]);
+  }
+  const total = segLen.reduce((a, b) => a + b, 0);
+  const ranges = [];
+  let cur = 0;
+  for (const iv of merged) { if (iv[0] > cur) ranges.push([cur, iv[0]]); cur = Math.max(cur, iv[1]); }
+  if (cur < total) ranges.push([cur, total]);
+  for (const r of ranges) drawRange(pts, segLen, r[0], r[1]);
+}
+function drawRange(pts, segLen, r0, r1) {
+  let len = 0;
+  ctx.beginPath();
+  let started = false;
+  for (let i = 0; i < segLen.length; i++) {
+    const ss = len, se = len + segLen[i];
+    if (se >= r0 && ss <= r1) {
+      const t0 = ss < r0 ? (r0 - ss) / segLen[i] : 0;
+      const t1 = se > r1 ? (r1 - ss) / segLen[i] : 1;
+      const x0 = pts[i].x + (pts[i + 1].x - pts[i].x) * t0;
+      const y0 = pts[i].y + (pts[i + 1].y - pts[i].y) * t0;
+      const x1 = pts[i].x + (pts[i + 1].x - pts[i].x) * t1;
+      const y1 = pts[i].y + (pts[i + 1].y - pts[i].y) * t1;
+      if (!started) { ctx.moveTo(x0, y0); started = true; }
+      ctx.lineTo(x1, y1);
+    }
+    len = se;
+  }
+  ctx.stroke();
+}
+
+function drawRoad(el) {
+  const def = ROAD_TYPES[el.type];
+  const pts = ptsToScreen(el.points);
+  if (pts.length < 2) return;
+  const flat = flatPts(pts, 16);
+  const w = roadW(el.type);
+  const segLen = [];
+  for (let i = 1; i < flat.length; i++) segLen.push(Math.hypot(flat[i].x - flat[i - 1].x, flat[i].y - flat[i - 1].y));
+
+  // 计算桥洞区间（在曲线上按弧长定位）
+  const gaps = state.gaps[el.id] || [];
+  const intervals = [];
+  for (const g of gaps) {
+    const sp = worldToScreen(g.wx, g.wy);
+    const len = projectArcLength(flat, segLen, sp.x, sp.y);
+    const h = roadW(g.upperType) / 2 + 2.5;
+    intervals.push([len - h, len + h]);
+  }
+
+  ctx.lineJoin = "round"; ctx.lineCap = "round";
+
+  // 描边底：主流地图双层线（外深 + 内主色）
+  if (def.outline) {
+    strokeWithGaps(flat, segLen, intervals, () => {
+      ctx.lineWidth = w + 3; ctx.strokeStyle = def.outline; ctx.setLineDash([]);
+    });
+  }
+
+  strokeWithGaps(flat, segLen, intervals, () => {
+    ctx.lineWidth = w; ctx.strokeStyle = def.color;
+    if (def.dashed) ctx.setLineDash([w * 2.2, w * 1.4]); else ctx.setLineDash([]);
+  });
+  ctx.setLineDash([]);
+}
+
+// 自动路口节点
+function drawJunctionNode(x, y) {
+  ctx.beginPath();
+  ctx.arc(x, y, 3, 0, Math.PI * 2);
+  ctx.fillStyle = "#232830";
+  ctx.fill();
+  ctx.lineWidth = 1.2;
+  ctx.strokeStyle = "#cfd6df";
+  ctx.stroke();
+}
+
+/* ---- 路口 / 立交自动检测 ---- */
+function canJunction(a, b) {
+  const isHW = t => t === "highway" || t === "highway_under";
+  const isRamp = t => t === "ramp";
+  const isElev = t => t === "elevated";
+  // 高速仅与匝道连接
+  if (isHW(a) && !isRamp(b)) return false;
+  if (isHW(b) && !isRamp(a)) return false;
+  // 匝道仅与高速、高架连接
+  if (isRamp(a) && !isHW(b) && !isElev(b)) return false;
+  if (isRamp(b) && !isHW(a) && !isElev(a)) return false;
+  return true;
+}
+// 立交上层判定（同层级且不连通时不挖洞）
+function upperTier(type) {
+  if (type === "highway" || type === "highway_under") return 4;
+  if (type === "elevated") return 3;
+  if (type === "ramp") return 2;
+  return 1;
+}
+// 线段相交，返回交点及参数
+function segIntersect(p1, p2, p3, p4) {
+  const x1 = p1.x, y1 = p1.y, x2 = p2.x, y2 = p2.y, x3 = p3.x, y3 = p3.y, x4 = p4.x, y4 = p4.y;
+  const d = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+  if (Math.abs(d) < 1e-10) return null;
+  const t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / d;
+  const u = -((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / d;
+  if (t < -1e-9 || t > 1 + 1e-9 || u < -1e-9 || u > 1 + 1e-9) return null;
+  return { x: x1 + t * (x2 - x1), y: y1 + t * (y2 - y1), s: t, t: u };
+}
+function recomputeJunctions() {
+  state.junctions = [];
+  state.gaps = {};
+  const roads = state.elements.filter(e => e.kind === "road");
+  // 预展平世界坐标曲线，使交点检测与渲染曲线一致（修复桥洞位置偏移）
+  const flatData = roads.map(r => ({ road: r, flat: flatPts(r.points, 16) }));
+  for (let i = 0; i < flatData.length; i++) {
+    for (let j = i + 1; j < flatData.length; j++) {
+      const a = flatData[i], b = flatData[j];
+      const eligible = canJunction(a.road.type, b.road.type);
+      for (let si = 0; si < a.flat.length - 1; si++) {
+        for (let sj = 0; sj < b.flat.length - 1; sj++) {
+          const ix = segIntersect(a.flat[si], a.flat[si + 1], b.flat[sj], b.flat[sj + 1]);
+          if (!ix) continue;
+          if (eligible) {
+            state.junctions.push({ x: ix.x, y: ix.y });
+          } else {
+            const ta = upperTier(a.road.type), tb = upperTier(b.road.type);
+            if (ta === tb) continue;
+            const lower = ta > tb ? b.road : a.road;
+            const upper = ta > tb ? a.road : b.road;
+            (state.gaps[lower.id] = state.gaps[lower.id] || []).push({ wx: ix.x, wy: ix.y, upperType: upper.type });
+          }
+        }
+      }
+    }
+  }
+}
+
+/* ---- 铁路（条纹相间）---- */
+function drawRailway(el) {
+  const def = RAILWAY_TYPES[el.type];
+  const pts = ptsToScreen(el.points);
+  if (pts.length < 2) return;
+  const flat = flatPts(pts, 16);
+  const w = Math.max(2.5, def.width * Math.sqrt(state.zoom));
+  ctx.lineJoin = "round"; ctx.lineCap = "butt";
+
+  const colorA = def.colorA || el.color || "#c724b1";
+
+  // 描边底（如有 outline）
+  if (def.outline) {
+    ctx.lineWidth = w + 3;
+    ctx.strokeStyle = def.outline;
+    ctx.setLineDash([]);
+    strokePath(flat);
+  }
+
+  // 底层：实色 A
+  ctx.lineWidth = w;
+  ctx.strokeStyle = colorA;
+  ctx.setLineDash([]);
+  strokePath(flat);
+
+  // 上层：颜色 B 虚线，形成相间条纹
+  const dash = Math.max(6, w * 2.4);
+  ctx.lineWidth = w;
+  ctx.strokeStyle = def.colorB;
+  ctx.setLineDash([dash, dash]);
+  strokePath(flat);
+  ctx.setLineDash([]);
+
+  // 名称标签
+  if (el.name) {
+    const mid = midpoint(el.points);
+    const s = worldToScreen(mid.x, mid.y);
+    drawLabel(s.x, s.y + 12, el.name, "#ffd9ec");
+  }
+}
+
+/* ---- 路徽（编号图标）---- */
+// 注：道路名称现在直接沿道路书写（drawRoadName），所以这里只画路徽
+function drawRoadShieldAndLabel(el) {
+  const def = ROAD_TYPES[el.type];
+  const shield = def.shield || el.shieldStyle;
+  if (!shield) return;
+  const pts = el.points;
+  if (pts.length < 2) return;
+  // 放在路径中点
+  const mid = midpoint(pts);
+  const s = worldToScreen(mid.x, mid.y);
+
+  if (shield === "expressway") {
+    drawExpresswayShield(s.x, s.y, el.number);
+  } else if (shield === "national") {
+    drawNationalShield(s.x, s.y, el.number);
+  } else if (shield === "provincial") {
+    drawProvincialShield(s.x, s.y, el.number);
+  }
+}
+
+function midpoint(pts) {
+  // 按曲线总长度取中点（沿平滑曲线定位，使路徽/标签贴在线上）
+  if (pts.length === 1) return pts[0];
+  const flat = flatPts(pts, 12);
+  let total = 0;
+  const segs = [];
+  for (let i = 1; i < flat.length; i++) {
+    const d = Math.hypot(flat[i].x - flat[i-1].x, flat[i].y - flat[i-1].y);
+    segs.push(d); total += d;
+  }
+  let target = total / 2, acc = 0;
+  for (let i = 1; i < flat.length; i++) {
+    if (acc + segs[i-1] >= target) {
+      const t = (target - acc) / (segs[i-1] || 1);
+      return { x: flat[i-1].x + (flat[i].x - flat[i-1].x) * t, y: flat[i-1].y + (flat[i].y - flat[i-1].y) * t };
+    }
+    acc += segs[i-1];
+  }
+  return flat[flat.length - 1];
+}
+
+// 国家高速路徽：上红下绿，上面写"国家高速"，下面写编号
+function drawExpresswayShield(cx, cy, number) {
+  const w = 30, h = 38;
+  const x = cx - w/2, y = cy - h/2;
+  ctx.save();
+  ctx.shadowColor = "rgba(0,0,0,0.5)"; ctx.shadowBlur = 6; ctx.shadowOffsetY = 1;
+  roundRect(x, y, w, h, 5);
+  ctx.shadowColor = "transparent";
+  // 上部红
+  ctx.fillStyle = "#d32f2f";
+  ctx.save(); ctx.beginPath(); roundRectPath(x, y, w, h, 5); ctx.clip();
+  ctx.fillRect(x, y, w, h * 0.32);
+  ctx.restore();
+  // 下部绿
+  ctx.fillStyle = "#2e7d32";
+  ctx.save(); ctx.beginPath(); roundRectPath(x, y, w, h, 5); ctx.clip();
+  ctx.fillRect(x, y + h * 0.32, w, h * 0.68);
+  ctx.restore();
+  // 边框
+  ctx.lineWidth = 1.5; ctx.strokeStyle = "#ffffff";
+  roundRect(x, y, w, h, 5); ctx.stroke();
+  // "国家高速" 文字（缩小字号）
+  ctx.fillStyle = "#ffffff";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.font = "600 6.5px sans-serif";
+  ctx.fillText("国家高速", cx, y + h * 0.16);
+  // 编号：G1-G99 正常大小；G0101-G9990 后缀两位缩小并底对齐
+  const num = number || "";
+  if (num.length > 3) {
+    // 联络线：前3字符（如 G01）正常，后2字符（如 01）缩小底对齐
+    const mainPart = num.slice(0, 3);
+    const subPart = num.slice(3);
+    const baseY = y + h * 0.68;
+    // 先画主部分
+    ctx.font = "700 11px sans-serif";
+    const mainWidth = ctx.measureText(mainPart).width;
+    // 再画后缀（缩小，底对齐）
+    ctx.font = "700 7px sans-serif";
+    const subWidth = ctx.measureText(subPart).width;
+    const totalWidth = mainWidth + subWidth;
+    const startX = cx - totalWidth / 2;
+    // 主部分（底对齐到基线）
+    ctx.font = "700 11px sans-serif";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "alphabetic";
+    const baseline = y + h * 0.785;
+    ctx.fillText(mainPart, startX, baseline);
+    // 后缀（缩小，底对齐到同一基线）
+    ctx.font = "700 7px sans-serif";
+    ctx.fillText(subPart, startX + mainWidth, baseline);
+  } else {
+    ctx.font = "700 11px sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(num, cx, y + h * 0.66);
+  }
+  ctx.restore();
+}
+
+// 国道路徽：红底白边圆角矩形 + 编号
+function drawNationalShield(cx, cy, number) {
+  const w = 24, h = 18;
+  const x = cx - w/2, y = cy - h/2;
+  ctx.save();
+  ctx.shadowColor = "rgba(0,0,0,0.5)"; ctx.shadowBlur = 6; ctx.shadowOffsetY = 1;
+  roundRect(x, y, w, h, 4);
+  ctx.fillStyle = "#c0392b"; ctx.fill();
+  ctx.shadowColor = "transparent";
+  ctx.lineWidth = 2; ctx.strokeStyle = "#ffffff"; ctx.stroke();
+  ctx.fillStyle = "#ffffff";
+  ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  ctx.font = "700 10px sans-serif";
+  ctx.fillText(number || "", cx, cy + 0.5);
+  ctx.restore();
+}
+
+// 省道路徽：黄底黑边圆角矩形 + 编号
+function drawProvincialShield(cx, cy, number) {
+  const w = 26, h = 18;
+  const x = cx - w/2, y = cy - h/2;
+  ctx.save();
+  ctx.shadowColor = "rgba(0,0,0,0.5)"; ctx.shadowBlur = 6; ctx.shadowOffsetY = 1;
+  roundRect(x, y, w, h, 4);
+  ctx.fillStyle = "#f1c40f"; ctx.fill();
+  ctx.shadowColor = "transparent";
+  ctx.lineWidth = 1.5; ctx.strokeStyle = "#1a1a1a"; ctx.stroke();
+  ctx.fillStyle = "#1a1a1a";
+  ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  ctx.font = "700 10px sans-serif";
+  ctx.fillText(number || "", cx, cy + 0.5);
+  ctx.restore();
+}
+
+function drawLabel(cx, cy, text, color) {
+  ctx.save();
+  ctx.font = "600 11px sans-serif";
+  ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  const m = ctx.measureText(text);
+  const pad = 5;
+  ctx.fillStyle = "rgba(20,24,30,0.72)";
+  roundRect(cx - m.width/2 - pad, cy - 8, m.width + pad*2, 16, 4); ctx.fill();
+  ctx.fillStyle = color || "#f5f5f5";
+  ctx.fillText(text, cx, cy);
+  ctx.restore();
+}
+
+/* ---- 沿道路曲线写路名（方向与道路一致，类似地图软件）---- */
+// 使用世界坐标计算路名位置（缩放无关），长路多放几个名字
+function drawRoadName(el) {
+  if (!el.name) return;
+  const name = el.name;
+  // 世界坐标展开曲线（缩放无关，保证路名位置不随缩放漂移）
+  const wf = flatPts(el.points, 16);
+  if (wf.length < 2) return;
+  const ws = [];
+  for (let i = 1; i < wf.length; i++) ws.push(Math.hypot(wf[i].x - wf[i-1].x, wf[i].y - wf[i-1].y));
+  const wTotal = ws.reduce((a, b) => a + b, 0);
+  if (wTotal < 30) return;
+
+  // 字号
+  const baseW = roadW(el.type);
+  const fontSize = Math.max(9, Math.min(18, baseW * 1.02 + 3));
+  ctx.save();
+  ctx.font = `600 ${fontSize}px sans-serif`;
+  const textW = ctx.measureText(name).width;
+  ctx.restore();
+
+  // 路徽信息（路徽在世界弧长 50% 处）
+  const def = ROAD_TYPES[el.type];
+  const hasShield = !!(def.shield || el.shieldStyle);
+  const shieldArcW = wTotal * 0.5;
+
+  // 长路多放几个名字：按世界长度决定标签数
+  const spacingW = 600;
+  let numLabels = Math.max(1, Math.floor(wTotal / spacingW));
+  numLabels = Math.min(numLabels, 6);
+
+  const padW = wTotal * 0.08;
+  const startW = padW;
+  const endW = wTotal - padW;
+
+  for (let li = 0; li < numLabels; li++) {
+    const frac = numLabels === 1 ? 0.5 : (li + 0.5) / numLabels;
+    let arcW = startW + frac * (endW - startW);
+
+    // 避开路徽
+    if (hasShield) {
+      const minDist = 60 / state.zoom + textW / (2 * state.zoom);
+      if (Math.abs(arcW - shieldArcW) < minDist) {
+        const dir = arcW < shieldArcW ? -1 : 1;
+        arcW = shieldArcW + dir * minDist;
+        if (arcW < startW || arcW > endW) continue;
+      }
+    }
+
+    // 评估该位置弯曲度（世界角度 = 屏幕角度，缩放无关）
+    const w0 = Math.max(padW, arcW - 80 / state.zoom);
+    const w1 = Math.min(wTotal - padW, arcW + 80 / state.zoom);
+    if (w1 - w0 > 40 / state.zoom) {
+      const a0 = sampleAtArc(wf, ws, w0);
+      const a1 = sampleAtArc(wf, ws, w1);
+      let bend = Math.abs(a1.angle - a0.angle);
+      bend = Math.min(bend, Math.PI * 2 - bend);
+      if (bend > 0.6) continue; // 太弯就跳过这个标签
+    }
+
+    // 取世界坐标位置和角度，转屏幕坐标
+    const smp = sampleAtArc(wf, ws, arcW);
+    const screenPt = worldToScreen(smp.x, smp.y);
+    let ang = smp.angle;
+    // 归一化角度（保证左→右阅读）
+    while (ang > Math.PI) ang -= Math.PI * 2;
+    while (ang <= -Math.PI) ang += Math.PI * 2;
+    if (ang > Math.PI / 2 || ang <= -Math.PI / 2) ang += Math.PI;
+    while (ang > Math.PI) ang -= Math.PI * 2;
+    while (ang <= -Math.PI) ang += Math.PI * 2;
+    if (ang > Math.PI / 2 || ang <= -Math.PI / 2) ang += Math.PI;
+
+    // 屏幕空间字号适配
+    const screenTotal = wTotal * state.zoom;
+    const screenUsable = screenTotal - 36;
+    const needW = textW + 20;
+    const scale = Math.min(1, screenUsable / needW);
+    const finalSize = Math.max(8, fontSize * scale);
+
+    ctx.save();
+    ctx.translate(screenPt.x, screenPt.y);
+    ctx.rotate(ang);
+    ctx.font = `600 ${finalSize}px sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    // 按道路底色选择文字/描边颜色
+    const isLight = el.type === "secondary" || el.type === "tertiary" || el.type === "primary";
+    const textColor = isLight ? "#1a1a1a" : "#ffffff";
+    const strokeColor = isLight ? "rgba(255,255,255,0.95)" : "rgba(0,0,0,0.85)";
+    const strokeW = Math.max(1.5, finalSize * 0.26);
+    // 浅色道路加淡白底衬
+    if (isLight) {
+      const tw = ctx.measureText(name).width;
+      const px = 10, py = 2;
+      ctx.fillStyle = "rgba(255,255,255,0.78)";
+      roundRect(-tw/2 - px, -finalSize/2 - py, tw + px*2, finalSize + py*2, 4); ctx.fill();
+    }
+    ctx.lineWidth = strokeW;
+    ctx.strokeStyle = strokeColor;
+    ctx.strokeText(name, 0, 0);
+    ctx.fillStyle = textColor;
+    ctx.fillText(name, 0, 0);
+    ctx.restore();
+  }
+}
+
+function roundRect(x, y, w, h, r) {
+  ctx.beginPath(); roundRectPath(x, y, w, h, r);
+}
+function roundRectPath(x, y, w, h, r) {
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+/* ---- 选中高亮 ---- */
+function drawSelection(el) {
+  const pts = ptsToScreen(el.points);
+  const flat = flatPts(pts, 16);
+  ctx.save();
+  ctx.lineWidth = 2; ctx.strokeStyle = "#7fb4ff";
+  ctx.setLineDash([6, 4]);
+  if (el.kind === "terrain") {
+    ctx.beginPath();
+    ctx.moveTo(flat[0].x, flat[0].y);
+    for (let i = 1; i < flat.length; i++) ctx.lineTo(flat[i].x, flat[i].y);
+    ctx.closePath(); ctx.stroke();
+  } else {
+    strokePath(flat);
+  }
+  // 顶点小方块（标在原始控制点上）
+  ctx.setLineDash([]);
+  ctx.fillStyle = "#7fb4ff";
+  for (const p of pts) { ctx.fillRect(p.x - 2.5, p.y - 2.5, 5, 5); }
+  ctx.restore();
+}
+
+/* ---- 草稿预览（平滑曲线 + 实时跟随光标）---- */
+function drawDraft() {
+  const d = state.drafting;
+  const pts = d.points.slice();
+  if (state.hoverWorld) pts.push(state.hoverWorld);
+  const sp = ptsToScreen(pts);
+  const flat = flatPts(sp, 16);
+  ctx.save();
+  ctx.lineWidth = 2; ctx.strokeStyle = "#9fe6ff";
+  ctx.setLineDash([5, 4]);
+  strokePath(flat);
+  ctx.setLineDash([]);
+  // 已放置节点用圆点标出（不含光标点）
+  ctx.fillStyle = "#9fe6ff";
+  const placed = ptsToScreen(d.points);
+  for (const p of placed) { ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI*2); ctx.fill(); }
+  ctx.restore();
+}
+
+/* ============== 命中测试（选择/删除）============== */
+function distToPolyline(px, py, pts, closed) {
+  let best = Infinity;
+  const n = pts.length;
+  const end = closed ? n : n - 1;
+  for (let i = 0; i < end; i++) {
+    const a = pts[i], b = pts[(i + 1) % n];
+    best = Math.min(best, distToSegment(px, py, a.x, a.y, b.x, b.y));
+  }
+  return best;
+}
+function distToSegment(px, py, ax, ay, bx, by) {
+  const dx = bx - ax, dy = by - ay;
+  const len2 = dx*dx + dy*dy;
+  let t = len2 === 0 ? 0 : ((px - ax) * dx + (py - ay) * dy) / len2;
+  t = Math.max(0, Math.min(1, t));
+  const cx = ax + t * dx, cy = ay + t * dy;
+  return Math.hypot(px - cx, py - cy);
+}
+
+function hitTest(worldX, worldY) {
+  const thresh = 10 / state.zoom;
+  // 从顶层往下找（按曲线命中，确保点中弯曲路段也能选中）
+  for (let i = state.elements.length - 1; i >= 0; i--) {
+    const el = state.elements[i];
+    const flat = flatPts(el.points, 12);
+    const d = distToPolyline(worldX, worldY, flat, el.kind === "terrain");
+    if (d < thresh) return el;
+  }
+  return null;
+}
+
+/* ============== 撤销栈 ============== */
+function pushHistory() {
+  state.history.push(JSON.stringify(state.elements));
+  if (state.history.length > 60) state.history.shift();
+}
+function undo() {
+  if (state.history.length === 0) { flash("无可撤销"); return; }
+  const prev = state.history.pop();
+  state.elements = JSON.parse(prev);
+  state.selectedId = null;
+  updatePreviewPanel();
+  recomputeJunctions();
+  requestRender();
+}
+
+/* ============== 提示气泡 ============== */
+let tipTimer = null;
+const tipEl = document.getElementById("tip");
+function flash(html) {
+  tipEl.innerHTML = html;
+  tipEl.classList.add("show");
+  clearTimeout(tipTimer);
+  tipTimer = setTimeout(() => tipEl.classList.remove("show"), 1800);
+}
+
+/* ============== 鼠标交互 ============== */
+function getMouseWorld(e) {
+  const rect = canvas.getBoundingClientRect();
+  return screenToWorld(e.clientX - rect.left, e.clientY - rect.top);
+}
+
+// 道路吸附：找到最近的道路上的点（非高速），阈值以内才吸附
+function snapToRoads(wx, wy, thresholdW) {
+  let best = null, bestDist = thresholdW;
+  for (const el of state.elements) {
+    if (el.kind !== "road") continue;
+    if (el.type === "highway" || el.type === "highway_under") continue;
+    const flat = flatPts(el.points, 12);
+    for (let i = 0; i < flat.length - 1; i++) {
+      const a = flat[i], b = flat[i + 1];
+      const dx = b.x - a.x, dy = b.y - a.y;
+      const len2 = dx * dx + dy * dy;
+      if (len2 === 0) continue;
+      let t = ((wx - a.x) * dx + (wy - a.y) * dy) / len2;
+      t = Math.max(0, Math.min(1, t));
+      const cx = a.x + dx * t, cy = a.y + dy * t;
+      const d = Math.hypot(wx - cx, wy - cy);
+      if (d < bestDist) { bestDist = d; best = { x: cx, y: cy }; }
+    }
+  }
+  return best;
+}
+
+canvas.addEventListener("mousedown", (e) => {
+  const w = getMouseWorld(e);
+  // 中键或空格 或 手型工具 → 平移
+  if (e.button === 1 || state.spaceDown || state.tool === "pan") {
+    state.panning = true;
+    state.panStart = { x: e.clientX, y: e.clientY, px: state.panX, py: state.panY };
+    canvas.classList.add("panning");
+    e.preventDefault();
+    return;
+  }
+  if (e.button !== 0) return;
+
+  if (state.tool === "select") {
+    const hit = hitTest(w.x, w.y);
+    state.selectedId = hit ? hit.id : null;
+    // 选中后允许拖动平移
+    if (!hit) {
+      state.panning = true;
+      state.panStart = { x: e.clientX, y: e.clientY, px: state.panX, py: state.panY };
+      canvas.classList.add("panning");
+    }
+    updatePreviewPanel();
+    requestRender();
+  } else if (state.tool === "road" || state.tool === "railway" || state.tool === "terrain") {
+    if (!state.drafting) {
+      state.drafting = { kind: state.tool, type: state.type, points: [{ x: w.x, y: w.y }] };
+    } else {
+      const last = state.drafting.points[state.drafting.points.length - 1];
+      // 避免重复点
+      if (Math.hypot(w.x - last.x, w.y - last.y) > 0.5) state.drafting.points.push({ x: w.x, y: w.y });
+    }
+    requestRender();
+  }
+});
+
+canvas.addEventListener("mousemove", (e) => {
+  const w = getMouseWorld(e);
+  // 道路绘制时自动吸附到附近道路（非高速）
+  let hoverW = w;
+  if (state.drafting && state.tool === "road") {
+    const snap = snapToRoads(w.x, w.y, 15 / state.zoom);
+    if (snap) hoverW = snap;
+  }
+  state.hoverWorld = hoverW;
+  document.getElementById("st-coord").textContent = `坐标：${w.x.toFixed(0)}, ${w.y.toFixed(0)}`;
+
+  if (state.panning) {
+    state.panX = state.panStart.px - (e.clientX - state.panStart.x) / state.zoom;
+    state.panY = state.panStart.py - (e.clientY - state.panStart.y) / state.zoom;
+    requestRender();
+    return;
+  }
+  if (state.drafting) requestRender();
+});
+
+canvas.addEventListener("mouseup", () => {
+  if (state.panning) { state.panning = false; canvas.classList.remove("panning"); requestRender(); }
+});
+
+canvas.addEventListener("mouseleave", () => { state.hoverWorld = null; requestRender(); });
+
+canvas.addEventListener("dblclick", () => {
+  if (state.drafting) finishDraft();
+});
+
+canvas.addEventListener("wheel", (e) => {
+  e.preventDefault();
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+  const before = screenToWorld(mx, my);
+  const factor = e.deltaY < 0 ? 1.15 : 1 / 1.15;
+  state.zoom = Math.min(8, Math.max(0.15, state.zoom * factor));
+  const after = screenToWorld(mx, my);
+  state.panX += before.x - after.x;
+  state.panY += before.y - after.y;
+  document.getElementById("st-zoom").textContent = `缩放：${Math.round(state.zoom * 100)}%`;
+  requestRender();
+}, { passive: false });
+
+/* ============== 键盘 ============== */
+window.addEventListener("keydown", (e) => {
+  if (e.target.tagName === "INPUT") return;
+  if (e.code === "Space") { state.spaceDown = true; canvas.style.cursor = "grab"; e.preventDefault(); }
+  if (e.key === "Enter") { if (state.drafting) finishDraft(); }
+  if (e.key === "Escape") { state.drafting = null; state.selectedId = null; updatePreviewPanel(); requestRender(); }
+  if (e.key === "Delete" || e.key === "Backspace") {
+    if (state.selectedId) {
+      pushHistory();
+      state.elements = state.elements.filter(el => el.id !== state.selectedId);
+      state.selectedId = null;
+      updatePreviewPanel();
+      recomputeJunctions();
+      requestRender();
+      flash("已删除");
+    }
+  }
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z") { e.preventDefault(); undo(); }
+});
+window.addEventListener("keyup", (e) => {
+  if (e.code === "Space") { state.spaceDown = false; updateCursor(); }
+});
+
+function updateCursor() {
+  canvas.classList.remove("panning", "selecting");
+  if (state.tool === "select") canvas.classList.add("selecting");
+}
+
+/* ============== 完成绘制 ============== */
+function finishDraft() {
+  const d = state.drafting;
+  state.drafting = null;
+  if (!d || d.points.length < 2) { requestRender(); return; }
+
+  const el = { id: newId(), kind: d.kind, type: d.type, points: d.points };
+
+  if (d.kind === "road") {
+    const def = ROAD_TYPES[d.type];
+    if (def.shield) {
+      // 高速：固定路徽，弹窗输入编号/名称
+      openModal(def.label, { number: true, name: true }, (data) => {
+        el.number = data.number || "";
+        el.name = data.name || "";
+        commitElement(el);
+      });
+      return;
+    } else {
+      // 普通道路：可选编号图标格式
+      openModal(def.label, { number: true, shield: true, name: true }, (data) => {
+        el.number = data.number || "";
+        el.shieldStyle = data.shieldStyle || "";
+        el.name = data.name || "";
+        commitElement(el);
+      });
+      return;
+    }
+  } else if (d.kind === "railway") {
+    const def = RAILWAY_TYPES[d.type];
+    if (d.type === "metro") {
+      // 地铁：自定义颜色
+      openModal(def.label, { color: true, name: true }, (data) => {
+        el.color = data.color || "#c724b1";
+        el.name = data.name || "";
+        commitElement(el);
+      });
+      return;
+    } else {
+      openModal(def.label, { name: true }, (data) => {
+        el.name = data.name || "";
+        commitElement(el);
+      });
+      return;
+    }
+  } else if (d.kind === "terrain") {
+    openModal(TERRAIN_TYPES[d.type].label, { name: true }, (data) => {
+      el.name = data.name || "";
+      commitElement(el);
+    });
+    return;
+  }
+  commitElement(el);
+}
+
+function commitElement(el) {
+  pushHistory();
+  state.elements.push(el);
+  if (el.kind === "road") recomputeJunctions();
+  requestRender();
+  flash(`已添加 <b>${labelOf(el)}</b>`);
+}
+
+function labelOf(el) {
+  if (el.kind === "road") return ROAD_TYPES[el.type].label;
+  if (el.kind === "railway") return RAILWAY_TYPES[el.type].label;
+  if (el.kind === "terrain") return TERRAIN_TYPES[el.type].label;
+  return "";
+}
+
+/* ============== 通用弹窗 ============== */
+const modalBg = document.getElementById("modal-bg");
+const modalTitle = document.getElementById("modal-title");
+const inNumber = document.getElementById("in-number");
+const inName = document.getElementById("in-name");
+const inColor = document.getElementById("in-color");
+const grpNumber = document.getElementById("modal-number-group");
+const grpShield = document.getElementById("modal-shield-group");
+const grpColor = document.getElementById("modal-color-group");
+const shieldPicker = document.getElementById("shield-picker");
+let modalCallback = null;
+let modalShieldValue = "";
+
+shieldPicker.addEventListener("click", (e) => {
+  const opt = e.target.closest(".shield-option");
+  if (!opt) return;
+  shieldPicker.querySelectorAll(".shield-option").forEach(o => o.classList.remove("active"));
+  opt.classList.add("active");
+  modalShieldValue = opt.dataset.shield;
+});
+
+function getPlaceholder(title) {
+  if (title.includes("高速")) return "如 京港澳高速";
+  if (title.includes("高铁") || title.includes("城际")) return "如 京沪高铁";
+  if (title.includes("地铁") || title.includes("轻轨")) return "如 1号线";
+  if (title.includes("磁悬浮")) return "如 上海磁浮线";
+  if (title.includes("普速")) return "如 京广铁路";
+  if (title.includes("高架")) return "如 延安高架";
+  if (title.includes("匝道")) return "如 A匝道";
+  if (title.includes("一级")) return "如 长安街";
+  if (title.includes("二级")) return "如 人民路";
+  if (title.includes("三级")) return "如 幸福巷";
+  if (title.includes("山区")) return "如 太行山脉";
+  if (title.includes("水域")) return "如 太湖";
+  return "可选";
+}
+
+function openModal(title, opts, cb) {
+  modalTitle.textContent = `${title} · 信息`;
+  inNumber.value = ""; inName.value = ""; inColor.value = "#c724b1";
+  // 根据类型设置不同的名称占位文本
+  const ph = getPlaceholder(title);
+  inName.placeholder = ph;
+  modalShieldValue = "";
+  shieldPicker.querySelectorAll(".shield-option").forEach(o => o.classList.remove("active"));
+  shieldPicker.querySelector('.shield-option[data-shield=""]').classList.add("active");
+  grpNumber.style.display = opts.number ? "" : "none";
+  grpShield.style.display = opts.shield ? "" : "none";
+  grpColor.style.display = opts.color ? "" : "none";
+  modalBg.classList.add("show");
+  modalCallback = cb;
+  const focusEl = opts.number ? inNumber : (opts.color ? inColor : inName);
+  setTimeout(() => focusEl.focus(), 30);
+}
+document.getElementById("modal-ok").addEventListener("click", () => {
+  const data = {
+    number: inNumber.value.trim(),
+    name: inName.value.trim(),
+    shieldStyle: modalShieldValue,
+    color: inColor.value
+  };
+  modalBg.classList.remove("show");
+  const cb = modalCallback; modalCallback = null;
+  if (cb) cb(data);
+});
+inNumber.addEventListener("keydown", (e) => { if (e.key === "Enter") inName.focus(); });
+inName.addEventListener("keydown", (e) => { if (e.key === "Enter") document.getElementById("modal-ok").click(); });
+
+/* ============== 确认弹窗 ============== */
+const confirmBg = document.getElementById("confirm-bg");
+const confirmTitle = document.getElementById("confirm-title");
+const confirmMsg = document.getElementById("confirm-msg");
+let confirmCallback = null;
+
+function showConfirm(title, msg, cb) {
+  confirmTitle.textContent = title;
+  confirmMsg.textContent = msg;
+  confirmBg.classList.add("show");
+  confirmCallback = cb;
+}
+document.getElementById("confirm-ok").addEventListener("click", () => {
+  confirmBg.classList.remove("show");
+  const cb = confirmCallback; confirmCallback = null;
+  if (cb) cb(true);
+});
+document.getElementById("confirm-cancel").addEventListener("click", () => {
+  confirmBg.classList.remove("show");
+  const cb = confirmCallback; confirmCallback = null;
+  if (cb) cb(false);
+});
+
+/* ============== 工具栏 ============== */
+document.querySelectorAll("[data-tool]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    if (state.drafting) { state.drafting = null; requestRender(); }
+    state.tool = btn.dataset.tool;
+    state.type = btn.dataset.type || null;
+    document.querySelectorAll("[data-tool]").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    updateCursor();
+    const t = state.tool === "select" ? "选择/平移" :
+              state.tool === "pan" ? "手型拖动" :
+              state.tool === "road" ? ROAD_TYPES[state.type].label :
+              state.tool === "railway" ? RAILWAY_TYPES[state.type].label :
+              TERRAIN_TYPES[state.type].label;
+    document.getElementById("st-tool").textContent = `工具：${t}`;
+    if (state.tool === "road" || state.tool === "railway" || state.tool === "terrain") {
+      flash(`点击添加节点，<b>双击或回车</b>结束`);
+    }
+  });
+});
+
+/* ============== 动作按钮 ============== */
+document.getElementById("btn-undo").addEventListener("click", undo);
+
+// 文件下拉菜单
+const fileDropdown = document.getElementById("file-dropdown");
+document.getElementById("btn-file").addEventListener("click", (e) => {
+  e.stopPropagation();
+  fileDropdown.classList.toggle("show");
+});
+document.addEventListener("click", () => fileDropdown.classList.remove("show"));
+fileDropdown.addEventListener("click", (e) => e.stopPropagation());
+
+/* ============== 选中全览小窗 ============== */
+const ppPanel = document.getElementById("preview-panel");
+const ppName = document.getElementById("pp-name");
+const ppType = document.getElementById("pp-type");
+const ppCanvas = document.getElementById("pp-canvas");
+const ppCtx = ppCanvas.getContext("2d");
+document.getElementById("pp-close").addEventListener("click", () => {
+  ppPanel.classList.remove("show");
+});
+
+function updatePreviewPanel() {
+  if (!state.selectedId) { ppPanel.classList.remove("show"); return; }
+  const el = state.elements.find(e => e.id === state.selectedId);
+  if (!el) { ppPanel.classList.remove("show"); return; }
+  if (el.kind === "terrain") { ppPanel.classList.remove("show"); return; }
+  // 名称和类型
+  ppName.textContent = el.name || labelOf(el);
+  ppType.textContent = labelOf(el);
+  // 计算 bounding box
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  for (const p of el.points) {
+    if (p.x < minX) minX = p.x; if (p.y < minY) minY = p.y;
+    if (p.x > maxX) maxX = p.x; if (p.y > maxY) maxY = p.y;
+  }
+  const w = maxX - minX, h = maxY - minY;
+  const pad = 16;
+  const cw = ppCanvas.width, ch = ppCanvas.height;
+  const scale = Math.min((cw - pad * 2) / (w || 1), (ch - pad * 2) / (h || 1));
+  const ox = (cw - w * scale) / 2 - minX * scale;
+  const oy = (ch - h * scale) / 2 - minY * scale;
+  // 绘制
+  ppCtx.clearRect(0, 0, cw, ch);
+  const flat = flatPts(el.points, 12);
+  if (el.kind === "road") {
+    const def = ROAD_TYPES[el.type];
+    ppCtx.lineJoin = "round"; ppCtx.lineCap = "round";
+    if (def.outline) {
+      ppCtx.lineWidth = 5; ppCtx.strokeStyle = def.outline;
+      ppCtx.beginPath();
+      ppCtx.moveTo(flat[0].x * scale + ox, flat[0].y * scale + oy);
+      for (let i = 1; i < flat.length; i++) ppCtx.lineTo(flat[i].x * scale + ox, flat[i].y * scale + oy);
+      ppCtx.stroke();
+    }
+    ppCtx.lineWidth = 3.5; ppCtx.strokeStyle = def.color;
+    ppCtx.beginPath();
+    ppCtx.moveTo(flat[0].x * scale + ox, flat[0].y * scale + oy);
+    for (let i = 1; i < flat.length; i++) ppCtx.lineTo(flat[i].x * scale + ox, flat[i].y * scale + oy);
+    ppCtx.stroke();
+  } else if (el.kind === "railway") {
+    const def = RAILWAY_TYPES[el.type];
+    const colorA = def.colorA || el.color || "#c724b1";
+    ppCtx.lineJoin = "round"; ppCtx.lineCap = "butt";
+    ppCtx.lineWidth = 4; ppCtx.strokeStyle = colorA;
+    ppCtx.beginPath();
+    ppCtx.moveTo(flat[0].x * scale + ox, flat[0].y * scale + oy);
+    for (let i = 1; i < flat.length; i++) ppCtx.lineTo(flat[i].x * scale + ox, flat[i].y * scale + oy);
+    ppCtx.stroke();
+    ppCtx.lineWidth = 4; ppCtx.strokeStyle = def.colorB;
+    ppCtx.setLineDash([8, 8]);
+    ppCtx.beginPath();
+    ppCtx.moveTo(flat[0].x * scale + ox, flat[0].y * scale + oy);
+    for (let i = 1; i < flat.length; i++) ppCtx.lineTo(flat[i].x * scale + ox, flat[i].y * scale + oy);
+    ppCtx.stroke();
+    ppCtx.setLineDash([]);
+  }
+  ppPanel.classList.add("show");
+}
+
+document.getElementById("btn-clear").addEventListener("click", () => {
+  if (state.elements.length === 0) return;
+  showConfirm("清空画布", "确定要清空所有内容吗？此操作可通过撤销恢复。", (ok) => {
+    if (!ok) return;
+    pushHistory();
+    state.elements = []; state.selectedId = null;
+    recomputeJunctions();
+    requestRender();
+    flash("已清空");
+  });
+});
+
+document.getElementById("btn-save").addEventListener("click", () => {
+  try {
+    localStorage.setItem("架空地图", JSON.stringify({ elements: state.elements, nextId }));
+    flash("已保存到本地");
+  } catch (err) { flash("保存失败"); }
+});
+
+document.getElementById("btn-import").addEventListener("click", () => {
+  document.getElementById("file-import").click();
+});
+document.getElementById("file-import").addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  e.target.value = "";
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const data = JSON.parse(reader.result);
+      pushHistory();
+      state.elements = data.elements || [];
+      nextId = data.nextId || (state.elements.length + 1);
+      state.selectedId = null;
+      recomputeJunctions();
+      requestRender();
+      flash(`已导入 <b>${file.name}</b>`);
+    } catch (err) { flash("导入失败：文件格式错误"); }
+  };
+  reader.readAsText(file);
+});
+
+document.getElementById("btn-export-xcs").addEventListener("click", () => {
+  const data = JSON.stringify({ elements: state.elements, nextId }, null, 2);
+  const blob = new Blob([data], { type: "application/json" });
+  const link = document.createElement("a");
+  link.download = "架空世界地图.xcs";
+  link.href = URL.createObjectURL(blob);
+  link.click();
+  URL.revokeObjectURL(link.href);
+  flash("已导出工程文件");
+});
+
+document.getElementById("btn-export-img").addEventListener("click", () => {
+  // 临时隐藏选中再导出
+  const sel = state.selectedId; state.selectedId = null; state.hoverWorld = null;
+  render();
+  const link = document.createElement("a");
+  link.download = "架空世界地图.png";
+  link.href = canvas.toDataURL("image/png");
+  link.click();
+  state.selectedId = sel;
+  requestRender();
+  flash("已导出 PNG");
+});
+
+/* ============== 启动 ============== */
+// 主题选择
+document.getElementById("theme-picker").addEventListener("click", (e) => {
+  const opt = e.target.closest(".theme-option");
+  if (!opt) return;
+  applyTheme(opt.dataset.theme);
+});
+// 读取已保存主题
+let savedTheme = "editor-dark";
+try { savedTheme = localStorage.getItem("架空地图主题") || "editor-dark"; } catch (e) {}
+if (savedTheme !== "editor-dark") {
+  applyTheme(savedTheme);
+} else {
+  refreshThemeColors();
+}
+
+resize();
+updateCursor();
+flash("选择左侧工具开始绘制 · <b>滚轮缩放</b> · <b>空格拖动</b>");
+</script>
+</body>
+</html>
